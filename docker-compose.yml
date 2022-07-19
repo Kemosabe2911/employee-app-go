@@ -1,0 +1,45 @@
+version: "3"
+services:
+
+  postgres:
+    container_name: postgres_training
+    image: postgres:11.5
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgresdata:/data/postgres
+    - postgresdbdata:/var/lib/postgresql/data
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+
+  pgadmin:
+    links:
+    - postgres:postgres
+    container_name: pgadmin_training
+    image: dpage/pgadmin4
+    ports:
+    - "9090:80"
+    volumes:
+    - pgadmindata:/root/.pgadmin
+    - pgadminlibdata:/var/lib/pgadmin
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+
+volumes:
+  postgresdata:
+    driver: local
+  postgresdbdata:
+    driver: local
+  pgadmindata:
+    driver: local
+  pgadminlibdata:
+    driver: local
+
+
+networks:
+  postgres:
+    driver: bridge
