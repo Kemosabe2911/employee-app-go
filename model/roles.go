@@ -1,6 +1,6 @@
 package model
 
 type Role struct {
-	Id   string `gorm:"primaryKey"`
+	Id   uint   `gorm:"primaryKey;autoIncrement"`
 	Role string `json:"role"`
 }

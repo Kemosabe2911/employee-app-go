@@ -1,7 +1,7 @@
 package model
 
 type Address struct {
-	Id     string `gorm:"primaryKey"`
+	Id     uint   `gorm:"primaryKey;autoautoIncrement"`
 	Street string `json:"street"`
 	City   string `json:"city"`
 	State  string `json:"state"`

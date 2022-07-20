@@ -19,7 +19,7 @@ func Start() {
 		fmt.Println(db)
 	}
 
-	// database.InitialMigration(db)
+	database.InitialMigration(db)
 
 	//Initialize Logger
 	_, err := logger.InitLogger(config.Env)
