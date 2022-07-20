@@ -28,6 +28,23 @@ func CreateEmployeeService(db *gorm.DB) *employeeService {
 
 func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequest) *model.APIResponse {
 	logger.Info("Start CreateEmployee in Service")
+	address := model.Address{
+		Street: employeeRequest.Street,
+		City:   employeeRequest.City,
+		State:  employeeRequest.State,
+	}
+
+	address, err1 := es.employeeRepository.CreateAddress(address)
+	if err1 != nil {
+		logger.Error("Error while inserting address")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot save address",
+			},
+		}
+	}
+
 	employee := model.Employee{
 		Name:         employeeRequest.Name,
 		Username:     employeeRequest.Username,
@@ -36,7 +53,7 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		IsActive:     true,
 		DepartmentID: employeeRequest.DepartmentID,
 		RoleID:       employeeRequest.RoleID,
-		AddressID:    employeeRequest.AddressID,
+		Address:      address,
 	}
 	logger.Info(employee)
 
