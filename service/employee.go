@@ -11,6 +11,7 @@ import (
 type EmployeeService interface {
 	CreateEmployee(employeeRequest dto.CreateEmployeeRequest) *model.APIResponse
 	GetAllEmployees() *model.APIResponse
+	GetEmployeeById(string) *model.APIResponse
 }
 
 type employeeService struct {
@@ -69,6 +70,25 @@ func (es *employeeService) GetAllEmployees() *model.APIResponse {
 		}
 	}
 	logger.Info("End GetAllEmployees in Service")
+	return &model.APIResponse{
+		StatusCode: 200,
+		Data:       employee,
+	}
+}
+
+func (es *employeeService) GetEmployeeById(id string) *model.APIResponse {
+	logger.Info("Started GetEmployeeById in Service")
+	employee, err := es.employeeRepository.GetEmployeeById(id)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Employee not found",
+			},
+		}
+	}
+	logger.Info("End GetEmployeeById in Service")
 	return &model.APIResponse{
 		StatusCode: 200,
 		Data:       employee,

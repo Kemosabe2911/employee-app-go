@@ -9,6 +9,7 @@ import (
 type EmployeeRepository interface {
 	CreateEmployee(model.Employee) (model.Employee, error)
 	GetAllEmployees() ([]model.Employee, error)
+	GetEmployeeById(string) (model.Employee, error)
 }
 
 type employeeRepository struct {
@@ -33,5 +34,13 @@ func (er *employeeRepository) GetAllEmployees() ([]model.Employee, error) {
 	var employee []model.Employee
 	err := er.DB.Find(&employee).Error
 	logger.Info("End GetAllEmployees in Repo")
+	return employee, err
+}
+
+func (er *employeeRepository) GetEmployeeById(id string) (model.Employee, error) {
+	logger.Info("Started GetEmployeeById in Repo")
+	var employee model.Employee
+	err := er.DB.First(&employee, "id = ?", id).Error
+	logger.Info("Ended GetEmployeeById in Repo")
 	return employee, err
 }

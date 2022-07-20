@@ -32,6 +32,7 @@ func ApplicationRouter(employeeController *controller.EmployeeController) *gin.E
 		{
 			v1.POST("/employee", employeeController.CreateEmployee)
 			v1.GET("/employee", employeeController.GetAllEmployees)
+			v1.GET("/employee/:id", employeeController.GetEmployeeById)
 		}
 	}
 

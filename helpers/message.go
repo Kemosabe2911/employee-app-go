@@ -6,9 +6,8 @@ import (
 
 //errors
 var (
-	InvalidRequestError      = errors.New("unable to process request")
-	ProductNotFoundError     = errors.New("product not found")
-	UnableToSaveOrder        = errors.New("unable to save order")
-	UnableToSaveOrderDetails = errors.New("unable to save orderdetails")
-	OrderNotFoundError       = errors.New("orders not found")
+	InvalidRequestError         = errors.New("unable to process request")
+	EmployeeNotFoundError       = errors.New("employee not found")
+	UnableToSaveEmployee        = errors.New("unable to save employee")
+	UnableToSaveEmployeeDetails = errors.New("unable to save employeedetails")
 )
