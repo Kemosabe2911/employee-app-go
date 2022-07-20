@@ -7,9 +7,9 @@ type Employee struct {
 	Password     string     `json:"password"`
 	Age          int        `json:"age"`
 	IsActive     bool       `json:"isActive"`
-	DepartmentID string     `json:"department_id"`
-	RoleID       string     `json:"role_id"`
-	AddressID    string     `json:"address_id"`
+	DepartmentID int        `json:"department_id"`
+	RoleID       int        `json:"role_id"`
+	AddressID    int        `json:"address_id"`
 	Department   Department `gorm:"foreignKey:DepartmentID"`
 	Role         Role       `gorm:"foreignKey:RoleID"`
 	Address      Address    `gorm:"foreignKey:AddressID"`

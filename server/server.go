@@ -1,7 +1,8 @@
 package server
 
 import (
-	"fmt"
+	"github.com/Kemosabe2911/employee-app-go/controller"
+	"github.com/Kemosabe2911/employee-app-go/service"
 
 	"github.com/Kemosabe2911/employee-app-go/config"
 	"github.com/Kemosabe2911/employee-app-go/database"
@@ -15,11 +16,9 @@ func Start() {
 
 	if dbErr != nil {
 		panic(dbErr)
-	} else {
-		fmt.Println(db)
 	}
 
-	database.InitialMigration(db)
+	// database.InitialMigration(db)
 
 	//Initialize Logger
 	_, err := logger.InitLogger(config.Env)
@@ -27,7 +26,11 @@ func Start() {
 		logger.Errorf("Error in initializing logger", "error", err)
 	}
 
-	router := ApplicationRouter()
+	role := &controller.RoleController{
+		RoleService: service.CreateRoleService(db),
+	}
+
+	router := ApplicationRouter(role)
 
 	logger.Infof("Starting the Server at Port %s", config.Port)
 	errServerStart := router.Run(":" + config.Port)
