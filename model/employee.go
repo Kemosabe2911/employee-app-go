@@ -1,7 +1,7 @@
 package model
 
 type Employee struct {
-	Id           string     `gorm:"primaryKey"`
+	Id           uint       `gorm:"primaryKey;autoIncrement"`
 	Name         string     `json:"name"`
 	Username     string     `json:"username"`
 	Password     string     `json:"password"`
