@@ -34,6 +34,8 @@ func ApplicationRouter(employeeController *controller.EmployeeController, roleCo
 			v1.GET("/role", roleController.GetAllRoles)
 			v1.GET("/role/:id", roleController.GetRoleById)
 			v1.POST("/employee", employeeController.CreateEmployee)
+			v1.GET("/employee", employeeController.GetAllEmployees)
+			v1.GET("/employee/:id", employeeController.GetEmployeeById)
 		}
 	}
 

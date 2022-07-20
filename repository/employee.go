@@ -8,6 +8,9 @@ import (
 
 type EmployeeRepository interface {
 	CreateEmployee(model.Employee) (model.Employee, error)
+	GetAllEmployees() ([]model.Employee, error)
+	GetEmployeeById(string) (model.Employee, error)
+	CreateAddress(model.Address) (model.Address, error)
 }
 
 type employeeRepository struct {
@@ -25,4 +28,27 @@ func (er *employeeRepository) CreateEmployee(employee model.Employee) (model.Emp
 	err := er.DB.Create(&employee).Error
 	logger.Info("End CreateEmployee in Repo")
 	return employee, err
+}
+
+func (er *employeeRepository) GetAllEmployees() ([]model.Employee, error) {
+	logger.Info("Start GetAllEmployees in Repo")
+	var employee []model.Employee
+	err := er.DB.Find(&employee).Error
+	logger.Info("End GetAllEmployees in Repo")
+	return employee, err
+}
+
+func (er *employeeRepository) GetEmployeeById(id string) (model.Employee, error) {
+	logger.Info("Started GetEmployeeById in Repo")
+	var employee model.Employee
+	err := er.DB.First(&employee, "id = ?", id).Error
+	logger.Info("Ended GetEmployeeById in Repo")
+	return employee, err
+}
+
+func (er *employeeRepository) CreateAddress(address model.Address) (model.Address, error) {
+	logger.Info("Start CreateAddress in Repo")
+	err := er.DB.Create(&address).Error
+	logger.Info("End CreateAddress in Repo")
+	return address, err
 }

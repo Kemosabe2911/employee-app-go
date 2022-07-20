@@ -24,3 +24,18 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End CreateEmployee in Controller")
 }
+
+func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
+	logger.Info("Start GetAllEmployees in Controller")
+	resp := ec.EmployeeService.GetAllEmployees()
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End GetAllEmployees in Controller")
+}
+
+func (ec *EmployeeController) GetEmployeeById(c *gin.Context) {
+	logger.Info("Start GetEmployeeById - Controller")
+	id := c.Param("id")
+	resp := ec.EmployeeService.GetEmployeeById(id)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End GetEmployeeById - Controller")
+}
