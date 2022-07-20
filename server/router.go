@@ -9,7 +9,7 @@ import (
 )
 
 //ApplicationRouter function to setup a new router object with the routes to be exposed and return it
-func ApplicationRouter() *gin.Engine {
+func ApplicationRouter(employeeController *controller.EmployeeController) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 
 	router := gin.New()
@@ -26,6 +26,13 @@ func ApplicationRouter() *gin.Engine {
 	router.Use(middleware.CORSMiddleware())
 	health := new(controller.HealthController)
 	router.GET("/health", health.GetHealth)
+
+	v1 := router.Group("v1")
+	{
+		{
+			v1.POST("/employee", employeeController.CreateEmployee)
+		}
+	}
 
 	return router
 }

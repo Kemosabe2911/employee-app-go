@@ -3,6 +3,9 @@ package server
 import (
 	"fmt"
 
+	"github.com/Kemosabe2911/employee-app-go/controller"
+	"github.com/Kemosabe2911/employee-app-go/service"
+
 	"github.com/Kemosabe2911/employee-app-go/config"
 	"github.com/Kemosabe2911/employee-app-go/database"
 	"github.com/Kemosabe2911/employee-app-go/logger"
@@ -27,7 +30,11 @@ func Start() {
 		logger.Errorf("Error in initializing logger", "error", err)
 	}
 
-	router := ApplicationRouter()
+	employee := &controller.EmployeeController{
+		EmployeeService: service.CreateEmployeeService(db),
+	}
+
+	router := ApplicationRouter(employee)
 
 	logger.Infof("Starting the Server at Port %s", config.Port)
 	errServerStart := router.Run(":" + config.Port)
