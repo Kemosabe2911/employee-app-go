@@ -16,12 +16,14 @@ type EmployeeService interface {
 
 type employeeService struct {
 	employeeRepository repository.EmployeeRepository
+	roleRepository     repository.RoleRepository
 	DB                 *gorm.DB
 }
 
 func CreateEmployeeService(db *gorm.DB) *employeeService {
 	return &employeeService{
 		employeeRepository: repository.CreateEmployeeRepository(db),
+		roleRepository:     repository.CreateRoleRepository(db),
 		DB:                 db,
 	}
 }
@@ -45,6 +47,17 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		}
 	}
 
+	role, err2 := es.roleRepository.GetRoleById(employeeRequest.RoleID)
+	if err2 != nil {
+		logger.Error("Error while getting role")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot retrive role",
+			},
+		}
+	}
+
 	employee := model.Employee{
 		Name:         employeeRequest.Name,
 		Username:     employeeRequest.Username,
@@ -52,7 +65,7 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		Age:          employeeRequest.Age,
 		IsActive:     true,
 		DepartmentID: employeeRequest.DepartmentID,
-		RoleID:       employeeRequest.RoleID,
+		Role:         role,
 		Address:      address,
 	}
 	logger.Info(employee)

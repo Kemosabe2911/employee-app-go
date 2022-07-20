@@ -6,7 +6,7 @@ type CreateEmployeeRequest struct {
 	Password     string `json:"password"`
 	Age          int    `json:"age"`
 	DepartmentID int    `json:"department_id"`
-	RoleID       int    `json:"role_id"`
+	RoleID       string `json:"role_id"`
 	Street       string `json:"street"`
 	City         string `json:"city"`
 	State        string `json:"state"`
