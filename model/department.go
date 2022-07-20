@@ -3,7 +3,7 @@ package model
 type Department struct {
 	Id                  uint              `gorm:"primaryKey;autoIncrement"`
 	Name                string            `json:"name"`
-	DepartmentDetailsID string            `json:"department_details_id"`
+	DepartmentDetailsID int               `json:"department_details_id"`
 	Department          DepartmentDetails `gorm:"foreignKey:DepartmentDetailsID"`
 }
 
