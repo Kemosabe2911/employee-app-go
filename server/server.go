@@ -30,7 +30,11 @@ func Start() {
 		RoleService: service.CreateRoleService(db),
 	}
 
-	router := ApplicationRouter(role)
+	employee := &controller.EmployeeController{
+		EmployeeService: service.CreateEmployeeService(db),
+	}
+
+	router := ApplicationRouter(employee, role)
 
 	logger.Infof("Starting the Server at Port %s", config.Port)
 	errServerStart := router.Run(":" + config.Port)
