@@ -12,4 +12,5 @@ var (
 	UnableToSaveOrderDetails = errors.New("unable to save orderdetails")
 	OrderNotFoundError       = errors.New("orders not found")
 	RoleNotFoundError        = errors.New("roles not found")
+	DepartmentNotFoundError  = errors.New("departments not found")
 )

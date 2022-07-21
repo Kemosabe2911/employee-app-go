@@ -24,3 +24,18 @@ func (dc *DepartmentController) CreateDepartment(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End CreateDepartment in Controller")
 }
+
+func (dc *DepartmentController) GetAllDepartments(c *gin.Context) {
+	logger.Info("Start GetAllDepartments in Controller")
+	resp := dc.DepartmentService.GetAllDepartments()
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End GetAllDepartments in Controller")
+}
+
+func (dc *DepartmentController) GetDepartmentById(c *gin.Context) {
+	id := c.Param("id")
+	logger.Info("Start GetDepartmentById in Controller")
+	resp := dc.DepartmentService.GetDepartmentById(id)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End GetDepartmentById in Controller")
+}

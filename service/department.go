@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/Kemosabe2911/employee-app-go/dto"
+	"github.com/Kemosabe2911/employee-app-go/helpers"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
 	"github.com/Kemosabe2911/employee-app-go/repository"
@@ -10,6 +11,8 @@ import (
 
 type DepartmentService interface {
 	CreateDepartment(createDepartmentDto dto.CreateDepartment) *model.APIResponse
+	GetAllDepartments() *model.APIResponse
+	GetDepartmentById(id string) *model.APIResponse
 }
 
 type departmentService struct {
@@ -68,6 +71,43 @@ func (ds *departmentService) CreateDepartment(createDepartmentDto dto.CreateDepa
 	logger.Infof("End CreateDepartment %+v", department)
 	return &model.APIResponse{
 		StatusCode: 201,
+		Data:       department,
+	}
+}
+
+func (ds *departmentService) GetAllDepartments() *model.APIResponse {
+	logger.Info("Start GetAllDepartments")
+	departments, err := ds.departmentRepository.GetAllDepartments()
+	if err != nil {
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: helpers.DepartmentNotFoundError.Error(),
+			},
+		}
+	}
+	logger.Infof("End GetAllDepartments count %d", len(departments))
+	return &model.APIResponse{
+		StatusCode: 200,
+		Data:       departments,
+	}
+}
+
+func (ds *departmentService) GetDepartmentById(id string) *model.APIResponse {
+	logger.Info("Start GetDepartmentById")
+	department, err := ds.departmentRepository.GetDepartmentById(id)
+	if err != nil {
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: helpers.DepartmentNotFoundError.Error(),
+			},
+		}
+	}
+
+	logger.Infof("End GetDepartmentById")
+	return &model.APIResponse{
+		StatusCode: 200,
 		Data:       department,
 	}
 }
