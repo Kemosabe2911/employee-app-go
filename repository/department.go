@@ -9,6 +9,8 @@ import (
 type DepartmentRepository interface {
 	CreateDepartment(department model.Department, tx *gorm.DB) (model.Department, error)
 	CreateDepartmentDetails(departmentDetails model.DepartmentDetails, tx *gorm.DB) (model.DepartmentDetails, error)
+	GetAllDepartments() ([]model.Department, error)
+	GetDepartmentById(id string) (model.Department, error)
 }
 
 type departmentRepository struct {
@@ -33,4 +35,26 @@ func (dr *departmentRepository) CreateDepartmentDetails(departmentDetails model.
 	err := tx.Create(&departmentDetails).Error
 	logger.Info("End CreateDepartmentDetails")
 	return departmentDetails, err
+}
+
+func (dr *departmentRepository) GetAllDepartments() ([]model.Department, error) {
+	var departments []model.Department
+	res := dr.DB.Preload("Department").Find(&departments)
+	if res.Error != nil {
+		msg := res.Error
+		return nil, msg
+	}
+	return departments, res.Error
+}
+
+func (dr *departmentRepository) GetDepartmentById(id string) (model.Department, error) {
+	logger.Info("Start GetDepartmentById")
+	var department model.Department
+	response := dr.DB.Where("id =?", id).Preload("Department").First(&department)
+	logger.Info(response.Error)
+	if response.Error != nil {
+		logger.Error("Error while fetching from department repo", response.Error.Error())
+	}
+	logger.Infof("End GetDepartmentById")
+	return department, response.Error
 }
