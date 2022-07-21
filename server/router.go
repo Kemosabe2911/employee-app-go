@@ -40,6 +40,7 @@ func ApplicationRouter(employeeController *controller.EmployeeController, roleCo
 			v1.GET("/department", departmentController.GetAllDepartments)
 			v1.GET("/department/:id", departmentController.GetDepartmentById)
 			v1.DELETE("/employee/:id", employeeController.DeleteEmployee)
+			v1.PUT("/department/:id", departmentController.UpdateDepartment)
 		}
 	}
 

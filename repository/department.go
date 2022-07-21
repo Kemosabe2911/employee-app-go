@@ -8,9 +8,10 @@ import (
 
 type DepartmentRepository interface {
 	CreateDepartment(department model.Department, tx *gorm.DB) (model.Department, error)
-	CreateDepartmentDetails(departmentDetails model.DepartmentDetails, tx *gorm.DB) (model.DepartmentDetails, error)
 	GetAllDepartments() ([]model.Department, error)
 	GetDepartmentById(id string) (model.Department, error)
+	UpdateDepartment(updatedDepartment model.Department, id string, tx *gorm.DB) (model.Department, error)
+	UpdateDepartmentDetails(updatedDepartmentDetails model.DepartmentDetails, id string, tx *gorm.DB) (model.DepartmentDetails, error)
 }
 
 type departmentRepository struct {
@@ -28,13 +29,6 @@ func (dr *departmentRepository) CreateDepartment(department model.Department, tx
 	err := tx.Create(&department).Error
 	logger.Info("End CreateDepartment")
 	return department, err
-}
-
-func (dr *departmentRepository) CreateDepartmentDetails(departmentDetails model.DepartmentDetails, tx *gorm.DB) (model.DepartmentDetails, error) {
-	logger.Infof("Start CreateDepartmentDetails %+v ", departmentDetails)
-	err := tx.Create(&departmentDetails).Error
-	logger.Info("End CreateDepartmentDetails")
-	return departmentDetails, err
 }
 
 func (dr *departmentRepository) GetAllDepartments() ([]model.Department, error) {
@@ -57,4 +51,28 @@ func (dr *departmentRepository) GetDepartmentById(id string) (model.Department, 
 	}
 	logger.Infof("End GetDepartmentById")
 	return department, response.Error
+}
+
+func (dr *departmentRepository) UpdateDepartment(updatedDepartment model.Department, id string, tx *gorm.DB) (model.Department, error) {
+	logger.Infof("Start UpdateDepartment %+v ", updatedDepartment)
+	var department model.Department
+	if err := dr.DB.Where("id = ?", id).Preload("Department").First(&department).Error; err != nil {
+		logger.Error("Error while fetching from department repo", err.Error())
+		return model.Department{}, err
+	}
+	err := tx.Model(&department).Updates(&updatedDepartment).Preload("Department").First(&department).Error
+	logger.Info("End UpdateDepartment")
+	return department, err
+}
+
+func (dr *departmentRepository) UpdateDepartmentDetails(updatedDepartmentDetails model.DepartmentDetails, id string, tx *gorm.DB) (model.DepartmentDetails, error) {
+	logger.Infof("Start UpdateDepartmentDetails %+v ", updatedDepartmentDetails)
+	var departmentDetails model.DepartmentDetails
+	if err := dr.DB.Where("id = ?", id).First(&departmentDetails).Error; err != nil {
+		logger.Error("Error while fetching from department details repo", err.Error())
+		return model.DepartmentDetails{}, err
+	}
+	err := tx.Model(&departmentDetails).Updates(&updatedDepartmentDetails).Error
+	logger.Info("End UpdateDepartmentDetails")
+	return departmentDetails, err
 }

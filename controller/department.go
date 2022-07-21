@@ -39,3 +39,16 @@ func (dc *DepartmentController) GetDepartmentById(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End GetDepartmentById in Controller")
 }
+
+func (dc *DepartmentController) UpdateDepartment(c *gin.Context) {
+	logger.Info("Start UpdateDepartment in Controller")
+	var UpdateDepartmentDto dto.UpdateDepartment
+	if err := c.BindJSON(&UpdateDepartmentDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	id := c.Param("id")
+	resp := dc.DepartmentService.UpdateDepartment(UpdateDepartmentDto, id)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End UpdateDepartment in Controller")
+}
