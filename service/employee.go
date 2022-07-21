@@ -15,6 +15,7 @@ type EmployeeService interface {
 	GetAllEmployees() *model.APIResponse
 	GetEmployeeById(string) *model.APIResponse
 	DeleteEmployee(string) *model.APIResponse
+	UpdateEmployee(string, dto.UpdateEmployeeRequest) *model.APIResponse
 }
 
 type employeeService struct {
@@ -40,27 +41,27 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		State:  employeeRequest.State,
 	}
 
-	address, err1 := es.employeeRepository.CreateAddress(address)
-	if err1 != nil {
-		logger.Error("Error while inserting address")
-		return &model.APIResponse{
-			StatusCode: 404,
-			Data: &model.ErrorStatus{
-				Message: "Cannot save address",
-			},
-		}
-	}
+	// address, err1 := es.employeeRepository.CreateAddress(address)
+	// if err1 != nil {
+	// 	logger.Error("Error while inserting address")
+	// 	return &model.APIResponse{
+	// 		StatusCode: 404,
+	// 		Data: &model.ErrorStatus{
+	// 			Message: "Cannot save address",
+	// 		},
+	// 	}
+	// }
 
-	role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employeeRequest.RoleID))
-	if err2 != nil {
-		logger.Error("Error while getting role")
-		return &model.APIResponse{
-			StatusCode: 404,
-			Data: &model.ErrorStatus{
-				Message: "Cannot retrive role",
-			},
-		}
-	}
+	// role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employeeRequest.RoleID))
+	// if err2 != nil {
+	// 	logger.Error("Error while getting role")
+	// 	return &model.APIResponse{
+	// 		StatusCode: 404,
+	// 		Data: &model.ErrorStatus{
+	// 			Message: "Cannot retrive role",
+	// 		},
+	// 	}
+	// }
 
 	employee := model.Employee{
 		Name:         employeeRequest.Name,
@@ -69,7 +70,7 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		Age:          employeeRequest.Age,
 		IsActive:     true,
 		DepartmentID: employeeRequest.DepartmentID,
-		Role:         role,
+		RoleID:       employeeRequest.RoleID,
 		Address:      address,
 	}
 	logger.Info(employee)
@@ -213,5 +214,63 @@ func (es *employeeService) DeleteEmployee(id string) *model.APIResponse {
 	return &model.APIResponse{
 		StatusCode: 200,
 		Data:       "Successfully Deleted",
+	}
+}
+
+func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateEmployeeRequest) *model.APIResponse {
+	logger.Info("Start UpdateEmployee - Service")
+	employee, err := es.employeeRepository.GetEmployeeById(id)
+	logger.Info(employee)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Employee not found",
+			},
+		}
+	}
+	address := model.Address{
+		Street: employeeRequest.Street,
+		City:   employeeRequest.City,
+		State:  employeeRequest.State,
+	}
+	// logger.Info(address)
+	address, err = es.employeeRepository.UpdateAddress(strconv.Itoa(employee.AddressID), address)
+	if err != nil {
+		logger.Error("Error while updating address")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot update address",
+			},
+		}
+	}
+
+	employee = model.Employee{
+		Name:         employeeRequest.Name,
+		Username:     employeeRequest.Username,
+		Age:          employeeRequest.Age,
+		IsActive:     employeeRequest.IsActive,
+		DepartmentID: employeeRequest.DepartmentID,
+		RoleID:       employeeRequest.RoleID,
+		Address:      address,
+	}
+	logger.Info(employee)
+
+	employee, ok := es.employeeRepository.UpdateEmployee(id, employee)
+	if ok != nil {
+		logger.Error("Error while address employee")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot update employee",
+			},
+		}
+	}
+	logger.Info("Updated employee")
+	return &model.APIResponse{
+		StatusCode: 201,
+		Data:       employee,
 	}
 }
