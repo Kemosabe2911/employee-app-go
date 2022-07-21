@@ -35,7 +35,7 @@ func (er *employeeRepository) CreateEmployee(employee model.Employee) (model.Emp
 func (er *employeeRepository) GetAllEmployees() ([]model.Employee, error) {
 	logger.Info("Start GetAllEmployees in Repo")
 	var employee []model.Employee
-	err := er.DB.Find(&employee).Error
+	err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
 	logger.Info("End GetAllEmployees in Repo")
 	return employee, err
 }
@@ -43,7 +43,7 @@ func (er *employeeRepository) GetAllEmployees() ([]model.Employee, error) {
 func (er *employeeRepository) GetEmployeeById(id string) (model.Employee, error) {
 	logger.Info("Started GetEmployeeById in Repo")
 	var employee model.Employee
-	err := er.DB.First(&employee, "id = ?", id).Error
+	err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
 	logger.Info("Ended GetEmployeeById in Repo")
 	return employee, err
 }
