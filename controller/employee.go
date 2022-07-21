@@ -47,3 +47,16 @@ func (ec *EmployeeController) DeleteEmployee(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End DeleteEmployee - Controller")
 }
+
+func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
+	logger.Info("Start UpdateEmployee - COntroller")
+	id := c.Param("id")
+	var employeeData dto.UpdateEmployeeRequest
+	if err := c.BindJSON(&employeeData); err != nil {
+		c.JSON(400, helpers.InvalidRequestError)
+		return
+	}
+	resp := ec.EmployeeService.UpdateEmployee(id, employeeData)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End UpdateEmployee - Controller")
+}
