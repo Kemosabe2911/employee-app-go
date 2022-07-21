@@ -101,6 +101,11 @@ func (es *employeeService) GetAllEmployees() *model.APIResponse {
 			},
 		}
 	}
+
+	for i, data := range employee {
+		logger.Info(i, data, data.AddressID, data.RoleID)
+	}
+
 	logger.Info("End GetAllEmployees in Service")
 	return &model.APIResponse{
 		StatusCode: 200,
