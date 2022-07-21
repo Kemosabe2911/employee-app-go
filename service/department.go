@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strconv"
+
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/helpers"
 	"github.com/Kemosabe2911/employee-app-go/logger"
@@ -13,6 +15,7 @@ type DepartmentService interface {
 	CreateDepartment(createDepartmentDto dto.CreateDepartment) *model.APIResponse
 	GetAllDepartments() *model.APIResponse
 	GetDepartmentById(id string) *model.APIResponse
+	UpdateDepartment(UpdateDepartmentDto dto.UpdateDepartment, id string) *model.APIResponse
 }
 
 type departmentService struct {
@@ -38,24 +41,12 @@ func (ds *departmentService) CreateDepartment(createDepartmentDto dto.CreateDepa
 		Website:        createDepartmentDto.Website,
 	}
 
-	departmentDetails, err := ds.departmentRepository.CreateDepartmentDetails(departmentDetails, tx)
-	if err != nil {
-		logger.Error("Error while inserting department details")
-		tx.Rollback()
-		return &model.APIResponse{
-			StatusCode: 404,
-			Data: &model.ErrorStatus{
-				Message: "Cannot save department details",
-			},
-		}
-	}
-
 	department := model.Department{
 		Name:       createDepartmentDto.Name,
 		Department: departmentDetails,
 	}
 
-	department, err = ds.departmentRepository.CreateDepartment(department, tx)
+	department, err := ds.departmentRepository.CreateDepartment(department, tx)
 	if err != nil {
 		logger.Error("Error while creating department", err.Error())
 		tx.Rollback()
@@ -109,5 +100,66 @@ func (ds *departmentService) GetDepartmentById(id string) *model.APIResponse {
 	return &model.APIResponse{
 		StatusCode: 200,
 		Data:       department,
+	}
+}
+
+func (ds *departmentService) UpdateDepartment(UpdateDepartmentDto dto.UpdateDepartment, id string) *model.APIResponse {
+	logger.Infof("Start UpdateDepartment %+v", UpdateDepartmentDto)
+
+	tx := ds.DB.Begin()
+
+	department, err := ds.departmentRepository.GetDepartmentById(id)
+	if err != nil {
+		logger.Error("Department not found", err.Error())
+		tx.Rollback()
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Department not found",
+			},
+		}
+	}
+	deptDetailsId := department.DepartmentDetailsID
+
+	updatedDepartmentDetails := model.DepartmentDetails{
+		DepartmentRoom: UpdateDepartmentDto.DepartmentRoom,
+		DepartmentCode: UpdateDepartmentDto.DepartmentCode,
+		Website:        UpdateDepartmentDto.Website,
+	}
+
+	updatedDepartmentDetails, err = ds.departmentRepository.UpdateDepartmentDetails(updatedDepartmentDetails, strconv.Itoa(deptDetailsId), tx)
+	if err != nil {
+		logger.Error("Error while updating department details", err.Error())
+		tx.Rollback()
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Unable to update department details",
+			},
+		}
+	}
+
+	updatedDepartment := model.Department{
+		Name:       UpdateDepartmentDto.Name,
+		Department: updatedDepartmentDetails,
+	}
+
+	updatedDepartment, err = ds.departmentRepository.UpdateDepartment(updatedDepartment, id, tx)
+	if err != nil {
+		logger.Error("Error while updating department", err.Error())
+		tx.Rollback()
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Unable to update department",
+			},
+		}
+	}
+	tx.Commit()
+
+	logger.Infof("End UpdateDepartment %+v", updatedDepartment)
+	return &model.APIResponse{
+		StatusCode: 200,
+		Data:       updatedDepartment,
 	}
 }
