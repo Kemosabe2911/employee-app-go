@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strconv"
+
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
@@ -47,7 +49,7 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		}
 	}
 
-	role, err2 := es.roleRepository.GetRoleById(employeeRequest.RoleID)
+	role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employeeRequest.RoleID))
 	if err2 != nil {
 		logger.Error("Error while getting role")
 		return &model.APIResponse{
@@ -118,6 +120,31 @@ func (es *employeeService) GetEmployeeById(id string) *model.APIResponse {
 			},
 		}
 	}
+
+	address, err1 := es.employeeRepository.GetAddressById(employee.AddressID)
+	if err1 != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Address not found",
+			},
+		}
+	}
+	employee.Address = address
+
+	role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employee.RoleID))
+	if err2 != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Role not found",
+			},
+		}
+	}
+	employee.Role = role
+
 	logger.Info("End GetEmployeeById in Service")
 	return &model.APIResponse{
 		StatusCode: 200,

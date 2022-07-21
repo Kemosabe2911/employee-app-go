@@ -11,6 +11,7 @@ type EmployeeRepository interface {
 	GetAllEmployees() ([]model.Employee, error)
 	GetEmployeeById(string) (model.Employee, error)
 	CreateAddress(model.Address) (model.Address, error)
+	GetAddressById(int) (model.Address, error)
 }
 
 type employeeRepository struct {
@@ -50,5 +51,13 @@ func (er *employeeRepository) CreateAddress(address model.Address) (model.Addres
 	logger.Info("Start CreateAddress in Repo")
 	err := er.DB.Create(&address).Error
 	logger.Info("End CreateAddress in Repo")
+	return address, err
+}
+
+func (er *employeeRepository) GetAddressById(id int) (model.Address, error) {
+	logger.Info("Started GetAddressById in Repo")
+	var address model.Address
+	err := er.DB.First(&address, "id = ?", id).Error
+	logger.Info("Ended GetAddressById in Repo")
 	return address, err
 }
