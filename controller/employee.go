@@ -39,3 +39,11 @@ func (ec *EmployeeController) GetEmployeeById(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End GetEmployeeById - Controller")
 }
+
+func (ec *EmployeeController) DeleteEmployee(c *gin.Context) {
+	logger.Info("Start DeleteEmployee - Controller")
+	id := c.Param("id")
+	resp := ec.EmployeeService.DeleteEmployee(id)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End DeleteEmployee - Controller")
+}

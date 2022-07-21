@@ -12,6 +12,7 @@ type EmployeeRepository interface {
 	GetEmployeeById(string) (model.Employee, error)
 	CreateAddress(model.Address) (model.Address, error)
 	GetAddressById(int) (model.Address, error)
+	DeleteEmployee(string) error
 }
 
 type employeeRepository struct {
@@ -60,4 +61,12 @@ func (er *employeeRepository) GetAddressById(id int) (model.Address, error) {
 	err := er.DB.First(&address, "id = ?", id).Error
 	logger.Info("Ended GetAddressById in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) DeleteEmployee(id string) error {
+	logger.Info("Start DeleteEmployee in Repo")
+	var employee model.Employee
+	err := er.DB.Delete(&employee, "id = ?", id).Error
+	logger.Info("End DeleteEmployee in Repo")
+	return err
 }
