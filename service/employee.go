@@ -66,7 +66,7 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 	employee := model.Employee{
 		Name:         employeeRequest.Name,
 		Username:     employeeRequest.Username,
-		Password:     employeeRequest.Password,
+		Email:        employeeRequest.Email,
 		Age:          employeeRequest.Age,
 		IsActive:     true,
 		DepartmentID: employeeRequest.DepartmentID,
