@@ -2,13 +2,16 @@ CREATE TABLE employee.employees (
 	id bigserial NOT NULL,
 	"name" text NULL,
 	username text NULL,
-	"password" text NULL,
+	email text NULL,
 	age int8 NULL,
 	is_active bool NULL,
 	department_id int8 NULL,
 	role_id int8 NULL,
 	address_id int8 NULL,
-	CONSTRAINT employees_pkey PRIMARY KEY (id)
+	is_admin bool NULL,
+	CONSTRAINT employees_email_key UNIQUE (email),
+	CONSTRAINT employees_pkey PRIMARY KEY (id),
+	CONSTRAINT employees_username_key UNIQUE (username)
 );
 
 
