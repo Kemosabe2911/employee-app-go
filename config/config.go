@@ -9,14 +9,16 @@ import (
 )
 
 type Config struct {
-	Env              string `mapstructure:"ENV"`
-	Port             string `mapstructure:"PORT"`
-	PostgresHost     string `mapstructure:"POSTGRES_HOST"`
-	PostgresDB       string `mapstructure:"POSTGRES_DB"`
-	PostgresSchema   string `mapstructure:"POSTGRES_SCHEMA"`
-	PostgresUsername string `mapstructure:"POSTGRES_USERNAME"`
-	PostgresPassword string `mapstructure:"POSTGRES_PASSWORD"`
-	PostgresPort     string `mapstructure:"POSTGRES_PORT"`
+	Env                string `mapstructure:"ENV"`
+	Port               string `mapstructure:"PORT"`
+	PostgresHost       string `mapstructure:"POSTGRES_HOST"`
+	PostgresDB         string `mapstructure:"POSTGRES_DB"`
+	PostgresSchema     string `mapstructure:"POSTGRES_SCHEMA"`
+	PostgresUsername   string `mapstructure:"POSTGRES_USERNAME"`
+	PostgresPassword   string `mapstructure:"POSTGRES_PASSWORD"`
+	PostgresPort       string `mapstructure:"POSTGRES_PORT"`
+	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 }
 
 var config *Config
