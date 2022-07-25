@@ -17,6 +17,7 @@ type Config struct {
 	PostgresUsername string `mapstructure:"POSTGRES_USERNAME"`
 	PostgresPassword string `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresPort     string `mapstructure:"POSTGRES_PORT"`
+	JwtSecretKey     string `mapstructure:"JWT_SECRET_KEY"`
 }
 
 var config *Config
