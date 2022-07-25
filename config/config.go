@@ -25,20 +25,18 @@ var config *Config
 var once sync.Once
 
 func init() {
-	once.Do(func() {
-		viper.AutomaticEnv()
-		viper.SetConfigFile(".env")
-		config = new(Config)
-		if err := viper.ReadInConfig(); err != nil {
-			log.Printf("Error reading config file, %s", err)
+	viper.AutomaticEnv()
+	viper.SetConfigFile(".env")
+	config = new(Config)
+	if err := viper.ReadInConfig(); err != nil {
+		log.Printf("Error reading config file, %s", err)
 
-		}
-		if err := viper.Unmarshal(config); err != nil {
-			log.Printf("Unable to decode into struct, %v", err)
+	}
+	if err := viper.Unmarshal(config); err != nil {
+		log.Printf("Unable to decode into struct, %v", err)
 
-		}
+	}
 
-	})
 }
 
 func GetConfig() *Config {

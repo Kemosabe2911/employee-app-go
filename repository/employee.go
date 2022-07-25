@@ -15,6 +15,7 @@ type EmployeeRepository interface {
 	DeleteEmployee(string) error
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
+	GetEmployeeByEmail(string) (model.Employee, error)
 }
 
 type employeeRepository struct {
@@ -92,4 +93,12 @@ func (er *employeeRepository) UpdateAddress(id string, address model.Address) (m
 	err := er.DB.Where("id = ?", id).Updates(&address).Error
 	logger.Info("Ended UpdateAddress in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) GetEmployeeByEmail(email string) (model.Employee, error) {
+	logger.Info("Started GetEmployeeById in Repo")
+	var employee model.Employee
+	err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "email = ?", email).Error
+	logger.Info("Ended GetEmployeeById in Repo")
+	return employee, err
 }

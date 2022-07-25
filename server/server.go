@@ -11,7 +11,9 @@ import (
 
 //Start function to initialize the server and begins to listen at the configured port
 func Start() {
+	config.LoadConfig()
 	config := config.GetConfig()
+
 	db, dbErr := database.GetDBConnection()
 
 	if dbErr != nil {
@@ -26,6 +28,17 @@ func Start() {
 		logger.Errorf("Error in initializing logger", "error", err)
 	}
 
+	// //Google Login
+	// mux := http.NewServeMux()
+
+	// mux.HandleFunc("/google/login", controller.GoogleLogin)
+	// mux.HandleFunc("/google/callback", controller.GoogleCallback)
+	// // run server
+	// log.Println("started server on :: http://localhost:8080/")
+	// if oops := http.ListenAndServe(":"+config.Port, mux); oops != nil {
+	// 	log.Fatal(oops)
+	// }
+
 	role := &controller.RoleController{
 		RoleService: service.CreateRoleService(db),
 	}
@@ -39,6 +52,7 @@ func Start() {
 	}
 
 	router := ApplicationRouter(employee, role, department)
+	// http.HandleFunc("/google/callback", controller.GoogleCallback)
 
 	logger.Infof("Starting the Server at Port %s", config.Port)
 	errServerStart := router.Run(":" + config.Port)
