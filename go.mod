@@ -6,6 +6,7 @@ require go.uber.org/zap v1.17.0
 
 require (
 	cloud.google.com/go/compute v1.7.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.8.1 // indirect

@@ -221,6 +221,7 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 	logger.Info("Start UpdateEmployee - Service")
 	employee, err := es.employeeRepository.GetEmployeeById(id)
 	logger.Info(employee)
+	email := employee.Email
 	if err != nil {
 		logger.Error("Error in service")
 		return &model.APIResponse{
@@ -250,6 +251,7 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 	employee = model.Employee{
 		Name:         employeeRequest.Name,
 		Username:     employeeRequest.Username,
+		Email:        email,
 		Age:          employeeRequest.Age,
 		IsActive:     employeeRequest.IsActive,
 		DepartmentID: employeeRequest.DepartmentID,

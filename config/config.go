@@ -1,8 +1,6 @@
 package config
 
 import (
-	"sync"
-
 	"log"
 
 	"github.com/spf13/viper"
@@ -17,12 +15,14 @@ type Config struct {
 	PostgresUsername   string `mapstructure:"POSTGRES_USERNAME"`
 	PostgresPassword   string `mapstructure:"POSTGRES_PASSWORD"`
 	PostgresPort       string `mapstructure:"POSTGRES_PORT"`
+	JwtSecretKey       string `mapstructure:"JWT_SECRET_KEY"`
 	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
 	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 }
 
 var config *Config
-var once sync.Once
+
+// var once sync.Once
 
 func init() {
 	viper.AutomaticEnv()
