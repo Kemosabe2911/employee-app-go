@@ -20,6 +20,7 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 	logger.Info("Start CreateEmployee in Controller")
 	var employeeData dto.CreateEmployeeRequest
 	if err := c.BindJSON(&employeeData); err != nil {
+		logger.Error(err)
 		c.JSON(400, helpers.InvalidRequestError)
 		return
 	}

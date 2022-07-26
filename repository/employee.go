@@ -15,6 +15,7 @@ type EmployeeRepository interface {
 	DeleteEmployee(string) error
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
+	GetEmployeeByEmail(string) (model.Employee, error)
 	UploadIdProof(id string, newFileName string) (model.Employee, error)
 }
 
@@ -82,8 +83,18 @@ func (er *employeeRepository) UpdateEmployee(id string, employee model.Employee)
 		logger.Error("Employee not found")
 		return employeeData, err
 	}
+	logger.Info(employeeData, employee)
 	// err = er.DB.Session(&gorm.Session{FullSaveAssociations: true}).Where("id = ?", id).Updates(&employee).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
-	err = er.DB.Model(&employeeData).Updates(&employee).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
+	err = er.DB.Model(&employeeData).Updates(map[string]interface{}{
+		"name":       employee.Name,
+		"Username":   employee.Username,
+		"Email":      employee.Email,
+		"age":        employee.Age,
+		"is_active":  employee.IsActive,
+		"Department": employee.Department,
+		"Role":       employee.Role,
+		"Address":    employee.Address,
+	}).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
 	logger.Info("Ended UpdateEmployee in Repo")
 	return employee, err
 }
@@ -93,6 +104,14 @@ func (er *employeeRepository) UpdateAddress(id string, address model.Address) (m
 	err := er.DB.Where("id = ?", id).Updates(&address).Error
 	logger.Info("Ended UpdateAddress in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) GetEmployeeByEmail(email string) (model.Employee, error) {
+	logger.Info("Started GetEmployeeById in Repo")
+	var employee model.Employee
+	err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "email = ?", email).Error
+	logger.Info("Ended GetEmployeeById in Repo")
+	return employee, err
 }
 
 func (er *employeeRepository) UploadIdProof(id string, newFileName string) (model.Employee, error) {
