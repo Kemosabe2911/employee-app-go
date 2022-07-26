@@ -10,7 +10,6 @@ type Employee struct {
 	DepartmentID int        `json:"department_id"`
 	RoleID       int        `json:"role_id"`
 	AddressID    int        `json:"address_id"`
-	IsAdmin      bool       `json:"isAdmin"`
 	Department   Department `gorm:"foreignKey:DepartmentID"`
 	Role         Role       `gorm:"foreignKey:RoleID"`
 	Address      Address    `gorm:"foreignKey:AddressID"`

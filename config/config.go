@@ -22,8 +22,6 @@ type Config struct {
 
 var config *Config
 
-// var once sync.Once
-
 func init() {
 	viper.AutomaticEnv()
 	viper.SetConfigFile(".env")
@@ -36,7 +34,6 @@ func init() {
 		log.Printf("Unable to decode into struct, %v", err)
 
 	}
-
 }
 
 func GetConfig() *Config {

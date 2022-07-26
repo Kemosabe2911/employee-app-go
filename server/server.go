@@ -51,7 +51,11 @@ func Start() {
 		DepartmentService: service.CreateDepartmentService(db),
 	}
 
-	router := ApplicationRouter(employee, role, department)
+	user := &controller.UserController{
+		UserService: service.CreateUserService(db),
+	}
+
+	router := ApplicationRouter(employee, role, department, user)
 	// http.HandleFunc("/google/callback", controller.GoogleCallback)
 
 	logger.Infof("Starting the Server at Port %s", config.Port)
