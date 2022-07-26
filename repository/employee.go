@@ -15,6 +15,7 @@ type EmployeeRepository interface {
 	DeleteEmployee(string) error
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
+	UploadIdProof(id string, newFileName string) (model.Employee, error)
 }
 
 type employeeRepository struct {
@@ -92,4 +93,16 @@ func (er *employeeRepository) UpdateAddress(id string, address model.Address) (m
 	err := er.DB.Where("id = ?", id).Updates(&address).Error
 	logger.Info("Ended UpdateAddress in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) UploadIdProof(id string, newFileName string) (model.Employee, error) {
+	logger.Info("Start UploadIdProof in Repo")
+	var employeeData model.Employee
+	if err := er.DB.Where("id = ?", id).First(&employeeData).Error; err != nil {
+		logger.Error("Error while fetching from employee repo", err.Error())
+		return model.Employee{}, err
+	}
+	err := er.DB.Model(&employeeData).Update("IdProof", newFileName).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employeeData).Error
+	logger.Info("End UploadIdProof in Repo")
+	return employeeData, err
 }

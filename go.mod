@@ -2,7 +2,11 @@ module github.com/Kemosabe2911/employee-app-go
 
 go 1.18
 
-require go.uber.org/zap v1.17.0
+require (
+	github.com/google/uuid v1.1.2
+	go.uber.org/zap v1.17.0
+	gorm.io/gorm v1.23.8
+)
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
@@ -51,5 +55,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0 // indirect
 	gorm.io/driver/postgres v1.3.8 // indirect
-	gorm.io/gorm v1.23.8 // indirect
 )
