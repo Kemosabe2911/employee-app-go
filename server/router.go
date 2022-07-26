@@ -42,9 +42,11 @@ func ApplicationRouter(employeeController *controller.EmployeeController, roleCo
 			v1.DELETE("/employee/:id", employeeController.DeleteEmployee)
 			v1.PUT("/department/:id", departmentController.UpdateDepartment)
 			v1.PUT("/employee/:id", employeeController.UpdateEmployee)
-			v1.POST("/login", UserController.CreateUser)
+			v1.POST("/signup", UserController.CreateUser)
+			v1.POST("/login", UserController.LoginUser)
 			// v1.GET("/google/login", controller.GoogleLogin)
 			// v1.GET("/google/callback", controller.GoogleCallback)
+			v1.POST("/employee/id-proof/:id", employeeController.UploadIdProof)
 		}
 	}
 

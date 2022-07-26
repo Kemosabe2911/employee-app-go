@@ -1,11 +1,16 @@
 package utils
 
-import "net/mail"
+import (
+	"net/mail"
 
-func ValidMailAddress(email string) (string, bool) {
+	"github.com/Kemosabe2911/employee-app-go/logger"
+)
+
+func ValidMailAddress(email string) bool {
 	validEmail, err := mail.ParseAddress(email)
 	if err != nil {
-		return "", false
+		return false
 	}
-	return validEmail.Address, true
+	logger.Info(validEmail.Address)
+	return true
 }

@@ -11,6 +11,7 @@ import (
 
 type UserService interface {
 	CreateUser(dto.UserSignUpRequest) *model.APIResponse
+	UserLogin(dto.UserLoginRequest) *model.APIResponse
 }
 
 type userService struct {
@@ -41,7 +42,7 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 		}
 	}
 
-	if _, ok := utils.ValidMailAddress(userData.Email); !ok {
+	if ok := utils.ValidMailAddress(userData.Email); !ok {
 		return &model.APIResponse{
 			StatusCode: 400,
 			Data:       "Invalid Email",
@@ -67,6 +68,41 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 		}
 	}
 	logger.Info("Saved user")
+	return &model.APIResponse{
+		StatusCode: 201,
+		Data:       user,
+	}
+}
+
+func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIResponse {
+	if ok := utils.ValidMailAddress(loginData.Email); !ok {
+		return &model.APIResponse{
+			StatusCode: 400,
+			Data:       "Invalid Email",
+		}
+	}
+
+	user, err := us.userRepository.GetUserByEmail(loginData.Email)
+	if err != nil {
+		logger.Error("Error while getting user")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot get user",
+			},
+		}
+	}
+
+	logger.Info(user)
+	if ok := utils.CheckPasswordHash(loginData.Password, user.Password); !ok {
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Password doesn't match",
+			},
+		}
+	}
+	logger.Info("Login user")
 	return &model.APIResponse{
 		StatusCode: 201,
 		Data:       user,

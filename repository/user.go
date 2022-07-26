@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	CreateUser(model.User) (model.User, error)
+	GetUserByEmail(string) (model.User, error)
 }
 
 type userRepository struct {
@@ -23,6 +24,15 @@ func CreateUserRepository(db *gorm.DB) *userRepository {
 func (ur *userRepository) CreateUser(user model.User) (model.User, error) {
 	logger.Info("Started CreateUser in Repo")
 	err := ur.DB.Create(&user).Error
+	logger.Info("Ended CreateUser in Repo")
+	return user, err
+}
+
+func (ur *userRepository) GetUserByEmail(email string) (model.User, error) {
+	logger.Info("Started CreateUser in Repo")
+	var user model.User
+	err := ur.DB.Find(&user, "email = ?", email).Error
+	logger.Info(user)
 	logger.Info("Ended CreateUser in Repo")
 	return user, err
 }
