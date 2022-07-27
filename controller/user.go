@@ -46,8 +46,8 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	}
 	logger.Info(refresh_token)
 
-	c.SetCookie("access", access_token, 60*60*24, "/v1/login", "localhost", true, true)
-	c.SetCookie("refresh", refresh_token, 60*60*24, "/v1/login", "localhost", true, true)
+	c.SetCookie("access", access_token, 60*60*24, "/", "localhost", false, true)
+	c.SetCookie("refresh", refresh_token, 60*60*24, "/", "localhost", false, true)
 
 	c.JSON(resp.StatusCode, resp.Data)
 }
