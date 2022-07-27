@@ -61,7 +61,7 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 	if err != nil {
 		logger.Error("Error while creating user")
 		return &model.APIResponse{
-			StatusCode: 404,
+			StatusCode: 400,
 			Data: &model.ErrorStatus{
 				Message: "Cannot save user",
 			},
@@ -102,9 +102,10 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 			},
 		}
 	}
+
 	logger.Info("Login user")
 	return &model.APIResponse{
-		StatusCode: 201,
+		StatusCode: 200,
 		Data:       user,
 	}
 }
