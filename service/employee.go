@@ -206,7 +206,7 @@ func (es *employeeService) DeleteEmployee(id string) *model.APIResponse {
 	if err != nil {
 		logger.Error("Error while deleting employee")
 		return &model.APIResponse{
-			StatusCode: 400,
+			StatusCode: 404,
 			Data:       "Failed to delete",
 		}
 	}
@@ -273,7 +273,7 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 	}
 	logger.Info("Updated employee")
 	return &model.APIResponse{
-		StatusCode: 201,
+		StatusCode: 200,
 		Data:       employee,
 	}
 }
