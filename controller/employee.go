@@ -41,6 +41,7 @@ func (ec *EmployeeController) GetEmployeeById(c *gin.Context) {
 	logger.Info("Start GetEmployeeById - Controller")
 	id := c.Param("id")
 	resp := ec.EmployeeService.GetEmployeeById(id)
+	logger.Info(resp.Data)
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End GetEmployeeById - Controller")
 }
