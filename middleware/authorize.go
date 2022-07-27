@@ -1,47 +1,53 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/Kemosabe2911/employee-app-go/config"
+	"github.com/Kemosabe2911/employee-app-go/auth"
 	"github.com/Kemosabe2911/employee-app-go/logger"
-	"github.com/dgrijalva/jwt-go"
+
 	"github.com/gin-gonic/gin"
 )
 
-func IsAuthorized(adminAccessRequired bool) gin.HandlerFunc {
+func IsAuthorized() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		logger.Info(authHeader)
-		if authHeader == "" {
-			c.JSON(401, "Token not found")
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
-		tokenString := strings.Split(authHeader, " ")[1]
-		signingKey := []byte(config.GetConfig().JwtSecretKey)
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, isvalid := token.Method.(*jwt.SigningMethodHMAC); !isvalid {
-				return nil, fmt.Errorf("invalid token %+v", token.Header["alg"])
-			}
-			return signingKey, nil
-		})
-		logger.Info(token)
-		if err != nil || !token.Valid {
-			c.JSON(401, "Invalid token")
+
+		accessToken, err := c.Cookie("access")
+		if err != nil {
+			c.JSON(401, "access token not found")
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
-		claims := token.Claims.(jwt.MapClaims)
+		_, err = auth.ValidateToken(accessToken)
 
-		if adminAccessRequired {
-			if claims["isAdmin"] != true {
-				c.JSON(401, "Admin access required")
+		if err != nil {
+
+			refreshToken, err1 := c.Cookie("refresh")
+			if err1 != nil {
+				c.JSON(401, "refresh token not found")
 				c.AbortWithStatus(http.StatusUnauthorized)
+				return
 			}
+			logger.Info("got refresh token")
+
+			email, err1 := auth.ValidateToken(refreshToken)
+			if err1 != nil {
+				c.JSON(401, gin.H{"error": err1.Error()})
+				c.AbortWithStatus(http.StatusUnauthorized)
+				return
+			}
+			logger.Info("valid refresh token")
+
+			newAccessToken, err1 := auth.GenerateAccessToken(email)
+			if err1 != nil {
+				c.JSON(500, "error while creating new access token")
+				c.AbortWithStatus(500)
+				return
+			}
+			logger.Info("new acces token generated")
+
+			c.SetCookie("access", newAccessToken, 60*60*24*90, "/", "localhost", false, true)
 		}
 
 	}
