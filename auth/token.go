@@ -4,27 +4,43 @@ import (
 	"time"
 
 	"github.com/Kemosabe2911/employee-app-go/config"
-	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/dgrijalva/jwt-go"
 )
 
-func GenerateJWT(email string, isAdmin bool) (string, error) {
-	var signingKey = []byte(config.GetConfig().JwtSecretKey)
+var signingKey = []byte(config.GetConfig().JwtSecretKey)
 
-	token := jwt.New(jwt.SigningMethodHS256)
+type JWTClaim struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
+}
 
-	claims := token.Claims.(jwt.MapClaims)
-
-	claims["email"] = email
-	claims["isAdmin"] = isAdmin
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-
-	logger.Info(token)
-
+func generateJwt(email string, expTime time.Time) (string, error) {
+	claims := &JWTClaim{
+		Email: email,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expTime.Unix(),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(signingKey)
-
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
+}
+
+func GenerateAccessToken(email string) (string, error) {
+
+	expirationTime := time.Now().Add(15 * time.Minute)
+	tokenString, err := generateJwt(email, expirationTime)
+	return tokenString, err
+
+}
+
+func GenerateRefreshToken(email string) (string, error) {
+
+	expirationTime := time.Now().Add(24 * 90 * time.Hour)
+	tokenString, err := generateJwt(email, expirationTime)
+	return tokenString, err
+
 }
