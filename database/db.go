@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/Kemosabe2911/employee-app-go/config"
-	"github.com/Kemosabe2911/employee-app-go/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -35,6 +34,6 @@ func GetDBConnection() (*gorm.DB, error) {
 	return db, nil
 }
 
-func InitialMigration(db *gorm.DB) {
-	db.AutoMigrate(&model.Employee{}, &model.Address{}, &model.Department{}, &model.DepartmentDetails{}, &model.Project{}, &model.Role{}, &model.User{})
-}
+// func InitialMigration(db *gorm.DB) {
+// 	db.AutoMigrate(&model.Employee{}, &model.Address{}, &model.Department{}, &model.DepartmentDetails{}, &model.Project{}, &model.Role{}, &model.User{})
+// }

@@ -16,7 +16,7 @@ type EmployeeService interface {
 	GetEmployeeById(string) *model.APIResponse
 	DeleteEmployee(string) *model.APIResponse
 	UpdateEmployee(string, dto.UpdateEmployeeRequest) *model.APIResponse
-	// UploadIdProof(id string, newFileName string) *model.APIResponse
+	UploadIdProof(id string, newFileName string) *model.APIResponse
 }
 
 type employeeService struct {
@@ -278,21 +278,21 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 	}
 }
 
-// func (es *employeeService) UploadIdProof(id string, newFileName string) *model.APIResponse {
-// 	logger.Info("Start UploadIdProof in Service")
-// 	employeeData, err := es.employeeRepository.UploadIdProof(id, newFileName)
-// 	if err != nil {
-// 		logger.Error("Error while updating file name field")
-// 		return &model.APIResponse{
-// 			StatusCode: 404,
-// 			Data: &model.ErrorStatus{
-// 				Message: "Cannot update file name",
-// 			},
-// 		}
-// 	}
-// 	logger.Info("End UploadIdProof in Service")
-// 	return &model.APIResponse{
-// 		StatusCode: 201,
-// 		Data:       employeeData,
-// 	}
-// }
+func (es *employeeService) UploadIdProof(id string, newFileName string) *model.APIResponse {
+	logger.Info("Start UploadIdProof in Service")
+	employeeData, err := es.employeeRepository.UploadIdProof(id, newFileName)
+	if err != nil {
+		logger.Error("Error while updating file name field")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot update file name",
+			},
+		}
+	}
+	logger.Info("End UploadIdProof in Service")
+	return &model.APIResponse{
+		StatusCode: 201,
+		Data:       employeeData,
+	}
+}
