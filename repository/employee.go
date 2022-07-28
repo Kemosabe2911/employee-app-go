@@ -16,7 +16,7 @@ type EmployeeRepository interface {
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
 	GetEmployeeByEmail(string) (model.Employee, error)
-	UploadIdProof(id string, newFileName string) (model.Employee, error)
+	// UploadIdProof(id string, newFileName string) (model.Employee, error)
 }
 
 type employeeRepository struct {
@@ -114,14 +114,14 @@ func (er *employeeRepository) GetEmployeeByEmail(email string) (model.Employee, 
 	return employee, err
 }
 
-func (er *employeeRepository) UploadIdProof(id string, newFileName string) (model.Employee, error) {
-	logger.Info("Start UploadIdProof in Repo")
-	var employeeData model.Employee
-	if err := er.DB.Where("id = ?", id).First(&employeeData).Error; err != nil {
-		logger.Error("Error while fetching from employee repo", err.Error())
-		return model.Employee{}, err
-	}
-	err := er.DB.Model(&employeeData).Update("IdProof", newFileName).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employeeData).Error
-	logger.Info("End UploadIdProof in Repo")
-	return employeeData, err
-}
+// func (er *employeeRepository) UploadIdProof(id string, newFileName string) (model.Employee, error) {
+// 	logger.Info("Start UploadIdProof in Repo")
+// 	var employeeData model.Employee
+// 	if err := er.DB.Where("id = ?", id).First(&employeeData).Error; err != nil {
+// 		logger.Error("Error while fetching from employee repo", err.Error())
+// 		return model.Employee{}, err
+// 	}
+// 	err := er.DB.Model(&employeeData).Update("IdProof", newFileName).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employeeData).Error
+// 	logger.Info("End UploadIdProof in Repo")
+// 	return employeeData, err
+// }
