@@ -69,10 +69,8 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 
 func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 	logger.Info("Start UploadIdProof in Controller")
-	// id := c.Param("id")
+	id := c.Param("id")
 	file, err := c.FormFile("file")
-
-	logger.Info(file.Filename)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -93,7 +91,7 @@ func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 		return
 	}
 
-	// resp := ec.EmployeeService.UploadIdProof(id, newFileName)
-	c.JSON(201, newFileName)
+	resp := ec.EmployeeService.UploadIdProof(id, newFileName)
+	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End UploadIdProof in Controller")
 }
