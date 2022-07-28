@@ -70,16 +70,18 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 	logger.Info("Start UploadIdProof in Controller")
 	// id := c.Param("id")
+	logger.Info(c.ContentType())
 	file, err := c.FormFile("file")
 
-	logger.Info(file.Filename)
-
 	if err != nil {
+		logger.Error(err)
+		// logger.Error("No file")
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "No file is received",
 		})
 		return
 	}
+	logger.Info(file.Filename)
 
 	extension := filepath.Ext(file.Filename)
 	// Generate random file name for the new uploaded file so it doesn't override the old file with same name
@@ -92,8 +94,14 @@ func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 		logger.Info(err)
 		return
 	}
-
+	out := &outPut{
+		Filename: newFileName,
+	}
 	// resp := ec.EmployeeService.UploadIdProof(id, newFileName)
-	c.JSON(201, newFileName)
+	c.JSON(201, out)
 	logger.Info("End UploadIdProof in Controller")
+}
+
+type outPut struct {
+	Filename string `json:"filename"`
 }
