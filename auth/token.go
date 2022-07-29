@@ -17,6 +17,11 @@ type JWTClaim struct {
 	jwt.StandardClaims
 }
 
+type TokenStruct struct {
+	Access  string
+	Refresh string
+}
+
 func generateJwt(email string, expTime time.Time) (string, error) {
 	claims := &JWTClaim{
 		Email: email,

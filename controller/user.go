@@ -4,7 +4,6 @@ import (
 	"github.com/Kemosabe2911/employee-app-go/auth"
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
-	"github.com/Kemosabe2911/employee-app-go/model"
 	"github.com/Kemosabe2911/employee-app-go/service"
 	"github.com/gin-gonic/gin"
 )
@@ -31,23 +30,14 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	}
 	resp := uc.UserService.UserLogin(userData)
 	logger.Info(resp.Data)
-	email_id := resp.Data.(model.User).Email
-	access_token, err := auth.GenerateAccessToken(email_id)
-	if err != nil {
-		logger.Error("Error while creating Access Token")
-		c.JSON(500, "Access Token Failed")
-	}
-	logger.Info(access_token)
+	// if resp.StatusCode == 404 || resp.StatusCode == 400 {
+	// 	c.JSON(resp.StatusCode, resp.Data)
+	// 	return
+	// }
+	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "localhost", false, true)
+	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "localhost", false, true)
 
-	refresh_token, err := auth.GenerateRefreshToken(email_id)
-	if err != nil {
-		logger.Error("Error while creating Refresh Token")
-		c.JSON(500, "Refresh Token Failed")
-	}
-	logger.Info(refresh_token)
-
-	c.SetCookie("access", access_token, 60*60*24, "/", "localhost", false, true)
-	c.SetCookie("refresh", refresh_token, 60*60*24, "/", "localhost", false, true)
+	logger.Info("Successfully Logged In")
 
 	c.JSON(resp.StatusCode, resp.Data)
 }

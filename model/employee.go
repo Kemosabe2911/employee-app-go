@@ -1,10 +1,10 @@
 package model
 
 type Employee struct {
-	Id           uint       `gorm:"primaryKey;autoIncrement"`
+	Id           uint       `json:"id" gorm:"primaryKey;autoIncrement"`
 	Name         string     `json:"name"`
-	Username     string     `gorm:"unique"`
-	Email        string     `gorm:"unique"`
+	Username     string     `json:"username" gorm:"unique"`
+	Email        string     `json:"email" gorm:"unique"`
 	Age          int        `json:"age"`
 	IsActive     bool       `json:"is_active"`
 	IdProof      string     `json:"id_proof"`

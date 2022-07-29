@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/Kemosabe2911/employee-app-go/auth"
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
@@ -103,9 +104,38 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 		}
 	}
 
+	access_token, err := auth.GenerateAccessToken(loginData.Email)
+	if err != nil {
+		logger.Error("Error while creating Access Token")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Access Token Failed",
+			},
+		}
+	}
+	logger.Info(access_token)
+
+	refresh_token, err := auth.GenerateRefreshToken(loginData.Email)
+	if err != nil {
+		logger.Error("Error while creating Refresh Token")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Refresh Token Failed",
+			},
+		}
+	}
+	logger.Info(refresh_token)
+
+	tokens := auth.TokenStruct{
+		Access:  access_token,
+		Refresh: refresh_token,
+	}
+
 	logger.Info("Login user")
 	return &model.APIResponse{
 		StatusCode: 200,
-		Data:       user,
+		Data:       tokens,
 	}
 }
