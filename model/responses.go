@@ -6,6 +6,12 @@ type APIResponse struct {
 	Data       interface{}
 }
 
+type APIResponseWithError struct {
+	StatusCode int
+	Data       interface{}
+	Error      error
+}
+
 // ErrorStatus ...
 type ErrorStatus struct {
 	Message string `json:"message,omitempty"`
