@@ -30,10 +30,10 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	}
 	resp := uc.UserService.UserLogin(userData)
 	logger.Info(resp.Data)
-	// if resp.StatusCode == 404 || resp.StatusCode == 400 {
-	// 	c.JSON(resp.StatusCode, resp.Data)
-	// 	return
-	// }
+	if resp.Error != nil {
+		c.JSON(resp.StatusCode, resp.Data)
+		return
+	}
 	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "localhost", false, true)
 	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "localhost", false, true)
 

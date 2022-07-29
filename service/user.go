@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Kemosabe2911/employee-app-go/auth"
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
@@ -12,7 +14,7 @@ import (
 
 type UserService interface {
 	CreateUser(dto.UserSignUpRequest) *model.APIResponse
-	UserLogin(dto.UserLoginRequest) *model.APIResponse
+	UserLogin(dto.UserLoginRequest) *model.APIResponseWithError
 }
 
 type userService struct {
@@ -75,43 +77,47 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 	}
 }
 
-func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIResponse {
+func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIResponseWithError {
 	if ok := utils.ValidMailAddress(loginData.Email); !ok {
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 400,
 			Data:       "Invalid Email",
+			Error:      errors.New("invalid email"),
 		}
 	}
 
 	user, err := us.userRepository.GetUserByEmail(loginData.Email)
 	if err != nil {
 		logger.Error("Error while getting user")
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
 				Message: "Cannot get user",
 			},
+			Error: err,
 		}
 	}
 
 	logger.Info(user)
 	if ok := utils.CheckPasswordHash(loginData.Password, user.Password); !ok {
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
 				Message: "Password doesn't match",
 			},
+			Error: errors.New("password not correct"),
 		}
 	}
 
 	access_token, err := auth.GenerateAccessToken(loginData.Email)
 	if err != nil {
 		logger.Error("Error while creating Access Token")
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
 				Message: "Access Token Failed",
 			},
+			Error: err,
 		}
 	}
 	logger.Info(access_token)
@@ -119,11 +125,12 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 	refresh_token, err := auth.GenerateRefreshToken(loginData.Email)
 	if err != nil {
 		logger.Error("Error while creating Refresh Token")
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
 				Message: "Refresh Token Failed",
 			},
+			Error: err,
 		}
 	}
 	logger.Info(refresh_token)
@@ -134,8 +141,9 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 	}
 
 	logger.Info("Login user")
-	return &model.APIResponse{
+	return &model.APIResponseWithError{
 		StatusCode: 200,
 		Data:       tokens,
+		Error:      nil,
 	}
 }
