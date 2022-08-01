@@ -34,8 +34,8 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 		c.JSON(resp.StatusCode, resp.Data)
 		return
 	}
-	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "localhost", false, true)
-	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "localhost", false, true)
+	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "localhost", false, false)
+	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "localhost", false, false)
 
 	logger.Info("Successfully Logged In")
 
