@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"net/http"
+
 	"github.com/Kemosabe2911/employee-app-go/auth"
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
@@ -34,8 +36,10 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 		c.JSON(resp.StatusCode, resp.Data)
 		return
 	}
-	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "localhost", false, true)
-	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "localhost", false, true)
+
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "da29-14-142-179-226.in.ngrok.io", true, true)
+	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "da29-14-142-179-226.in.ngrok.io", true, true)
 
 	logger.Info("Successfully Logged In")
 
