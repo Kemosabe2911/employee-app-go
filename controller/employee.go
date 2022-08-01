@@ -73,11 +73,14 @@ func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 	file, err := c.FormFile("file")
 
 	if err != nil {
+		logger.Error(err)
+		// logger.Error("No file")
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "No file is received",
 		})
 		return
 	}
+	logger.Info(file.Filename)
 
 	extension := filepath.Ext(file.Filename)
 	// Generate random file name for the new uploaded file so it doesn't override the old file with same name
