@@ -47,7 +47,8 @@ func IsAuthorized() gin.HandlerFunc {
 			}
 			logger.Info("new acces token generated")
 
-			c.SetCookie("access", newAccessToken, 60*60*24*90, "/", "localhost", false, true)
+			c.SetSameSite(http.SameSiteNoneMode)
+			c.SetCookie("access", newAccessToken, 60*60*24*90, "/", "2aeb-14-142-179-226.in.ngrok.io", true, true)
 		}
 
 	}

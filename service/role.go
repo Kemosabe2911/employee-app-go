@@ -62,7 +62,7 @@ func (rs *roleService) GetAllRoles() *model.APIResponse {
 		return &model.APIResponse{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
-				Message: helpers.ErrRoleNotFoundError.Error(),
+				Message: helpers.ErrRoleNotFound.Error(),
 			},
 		}
 	}
@@ -80,7 +80,7 @@ func (rs *roleService) GetRoleById(id string) *model.APIResponse {
 		return &model.APIResponse{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
-				Message: helpers.ErrRoleNotFoundError.Error(),
+				Message: helpers.ErrRoleNotFound.Error(),
 			},
 		}
 	}

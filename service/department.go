@@ -73,7 +73,7 @@ func (ds *departmentService) GetAllDepartments() *model.APIResponse {
 		return &model.APIResponse{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
-				Message: helpers.ErrDepartmentNotFoundError.Error(),
+				Message: helpers.ErrDepartmentNotFound.Error(),
 			},
 		}
 	}
@@ -91,7 +91,7 @@ func (ds *departmentService) GetDepartmentById(id string) *model.APIResponse {
 		return &model.APIResponse{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{
-				Message: helpers.ErrDepartmentNotFoundError.Error(),
+				Message: helpers.ErrDepartmentNotFound.Error(),
 			},
 		}
 	}
