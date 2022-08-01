@@ -21,7 +21,7 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 	var employeeData dto.CreateEmployeeRequest
 	if err := c.BindJSON(&employeeData); err != nil {
 		logger.Error(err)
-		c.JSON(400, helpers.InvalidRequestError)
+		c.JSON(400, helpers.ErrInvalidRequest)
 		return
 	}
 
@@ -59,7 +59,7 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 	id := c.Param("id")
 	var employeeData dto.UpdateEmployeeRequest
 	if err := c.BindJSON(&employeeData); err != nil {
-		c.JSON(400, helpers.InvalidRequestError)
+		c.JSON(400, helpers.ErrInvalidRequest)
 		return
 	}
 	resp := ec.EmployeeService.UpdateEmployee(id, employeeData)
