@@ -21,6 +21,17 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 	resp := uc.UserService.CreateUser(userData)
+	logger.Info(resp.Data)
+	if resp.Error != nil {
+		c.JSON(resp.StatusCode, resp.Data)
+		return
+	}
+
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "http://localhost:8080", true, true)
+	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "http://localhost:8080", true, true)
+
+	logger.Info("Successfully Signed Up")
 	c.JSON(resp.StatusCode, resp.Data)
 }
 

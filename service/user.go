@@ -13,7 +13,7 @@ import (
 )
 
 type UserService interface {
-	CreateUser(dto.UserSignUpRequest) *model.APIResponse
+	CreateUser(dto.UserSignUpRequest) *model.APIResponseWithError
 	UserLogin(dto.UserLoginRequest) *model.APIResponseWithError
 }
 
@@ -29,26 +29,29 @@ func CreateUserService(db *gorm.DB) *userService {
 	}
 }
 
-func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResponse {
+func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResponseWithError {
 	if ok := utils.VerfityPassword(userData.Password, userData.ConfirmPassword); !ok {
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 400,
 			Data:       "Passwords doesn't match",
+			Error:      nil,
 		}
 	}
 
 	hashedPassword, ok := utils.HashPassword(userData.Password)
 	if ok != nil {
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 500,
 			Data:       "Error while hashing password",
+			Error:      nil,
 		}
 	}
 
 	if ok := utils.ValidMailAddress(userData.Email); !ok {
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 400,
 			Data:       "Invalid Email",
+			Error:      nil,
 		}
 	}
 
@@ -63,17 +66,30 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 	user, err := us.userRepository.CreateUser(user)
 	if err != nil {
 		logger.Error("Error while creating user")
-		return &model.APIResponse{
+		return &model.APIResponseWithError{
 			StatusCode: 400,
 			Data: &model.ErrorStatus{
 				Message: "Cannot save user",
 			},
+			Error: err,
+		}
+	}
+	tokens, err := auth.GenerateAccessAndRefreshToken(user.Email)
+	if err != nil {
+		logger.Error("Error while creating tokens")
+		return &model.APIResponseWithError{
+			StatusCode: 400,
+			Data: &model.ErrorStatus{
+				Message: "Cannot generate token",
+			},
+			Error: err,
 		}
 	}
 	logger.Info("Saved user")
-	return &model.APIResponse{
+	return &model.APIResponseWithError{
 		StatusCode: 201,
-		Data:       user,
+		Data:       tokens,
+		Error:      nil,
 	}
 }
 
