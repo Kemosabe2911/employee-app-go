@@ -125,35 +125,47 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 		}
 	}
 
-	access_token, err := auth.GenerateAccessToken(loginData.Email)
+	// access_token, err := auth.GenerateAccessToken(loginData.Email)
+	// if err != nil {
+	// 	logger.Error("Error while creating Access Token")
+	// 	return &model.APIResponseWithError{
+	// 		StatusCode: 404,
+	// 		Data: &model.ErrorStatus{
+	// 			Message: "Access Token Failed",
+	// 		},
+	// 		Error: err,
+	// 	}
+	// }
+	// logger.Info(access_token)
+
+	// refresh_token, err := auth.GenerateRefreshToken(loginData.Email)
+	// if err != nil {
+	// 	logger.Error("Error while creating Refresh Token")
+	// 	return &model.APIResponseWithError{
+	// 		StatusCode: 404,
+	// 		Data: &model.ErrorStatus{
+	// 			Message: "Refresh Token Failed",
+	// 		},
+	// 		Error: err,
+	// 	}
+	// }
+	// logger.Info(refresh_token)
+
+	// tokens := auth.TokenStruct{
+	// 	Access:  access_token,
+	// 	Refresh: refresh_token,
+	// }
+
+	tokens, err := auth.GenerateAccessAndRefreshToken(user.Email)
 	if err != nil {
-		logger.Error("Error while creating Access Token")
+		logger.Error("Error while creating tokens")
 		return &model.APIResponseWithError{
-			StatusCode: 404,
+			StatusCode: 400,
 			Data: &model.ErrorStatus{
-				Message: "Access Token Failed",
+				Message: "Cannot generate token",
 			},
 			Error: err,
 		}
-	}
-	logger.Info(access_token)
-
-	refresh_token, err := auth.GenerateRefreshToken(loginData.Email)
-	if err != nil {
-		logger.Error("Error while creating Refresh Token")
-		return &model.APIResponseWithError{
-			StatusCode: 404,
-			Data: &model.ErrorStatus{
-				Message: "Refresh Token Failed",
-			},
-			Error: err,
-		}
-	}
-	logger.Info(refresh_token)
-
-	tokens := auth.TokenStruct{
-		Access:  access_token,
-		Refresh: refresh_token,
 	}
 
 	logger.Info("Login user")
