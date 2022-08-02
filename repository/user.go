@@ -29,10 +29,10 @@ func (ur *userRepository) CreateUser(user model.User) (model.User, error) {
 }
 
 func (ur *userRepository) GetUserByEmail(email string) (model.User, error) {
-	logger.Info("Started CreateUser in Repo")
+	logger.Info("Started GetUserByEmail in Repo")
 	var user model.User
 	err := ur.DB.Find(&user, "email = ?", email).Error
 	logger.Info(user)
-	logger.Info("Ended CreateUser in Repo")
+	logger.Info("Ended GetUserByEmail in Repo")
 	return user, err
 }

@@ -34,7 +34,7 @@ func ApplicationRouter(employeeController *controller.EmployeeController, roleCo
 			v1.GET("/role", roleController.GetAllRoles)
 			v1.GET("/role/:id", roleController.GetRoleById)
 			v1.POST("/employee", employeeController.CreateEmployee)
-			v1.GET("/employee" /*middleware.IsAuthorized(),*/, employeeController.GetAllEmployees)
+			v1.GET("/employee" ,middleware.IsAuthorized(), employeeController.GetAllEmployees)
 			v1.GET("/employee/:id", employeeController.GetEmployeeById)
 			v1.POST("/department", departmentController.CreateDepartment)
 			v1.GET("/department", departmentController.GetAllDepartments)

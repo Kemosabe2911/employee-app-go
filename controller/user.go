@@ -38,8 +38,8 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	}
 
 	c.SetSameSite(http.SameSiteNoneMode)
-	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "da29-14-142-179-226.in.ngrok.io", true, true)
-	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "da29-14-142-179-226.in.ngrok.io", true, true)
+	c.SetCookie("access", resp.Data.(auth.TokenStruct).Access, 60*60*24, "/", "http://localhost:8080", true, true)
+	c.SetCookie("refresh", resp.Data.(auth.TokenStruct).Refresh, 60*60*24, "/", "http://localhost:8080", true, true)
 
 	logger.Info("Successfully Logged In")
 
