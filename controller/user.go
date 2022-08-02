@@ -45,3 +45,10 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 
 	c.JSON(resp.StatusCode, resp.Data)
 }
+
+func (uc *UserController) LogoutUser(c *gin.Context) {
+	c.SetSameSite(http.SameSiteNoneMode)
+	c.SetCookie("access", "", -1, "/", "http://localhost:8080", true, true)
+	c.SetCookie("refresh", "", -1, "/", "http://localhost:8080", true, true)
+	c.JSON(200, "Successfully Logged Out")
+}
