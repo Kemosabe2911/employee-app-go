@@ -15,6 +15,7 @@ type EmployeeRepository interface {
 	DeleteEmployee(string) error
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
+	UpdateEmployeeStatusById(string, bool) (model.Employee, error)
 	GetEmployeeByEmail(string) (model.Employee, error)
 	UploadIdProof(id string, newFileName string) (model.Employee, error)
 }
@@ -104,6 +105,14 @@ func (er *employeeRepository) UpdateAddress(id string, address model.Address) (m
 	err := er.DB.Where("id = ?", id).Updates(&address).Error
 	logger.Info("Ended UpdateAddress in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) UpdateEmployeeStatusById(id string, is_active bool) (model.Employee, error) {
+	logger.Info("Started UpdateEmployeeStatusById in Repo")
+	var employee model.Employee
+	err := er.DB.Model(&employee).Where("id = ?", id).Update("is_active", is_active).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
+	logger.Info("Ended UpdateEmployeeStatusById in Repo")
+	return employee, err
 }
 
 func (er *employeeRepository) GetEmployeeByEmail(email string) (model.Employee, error) {

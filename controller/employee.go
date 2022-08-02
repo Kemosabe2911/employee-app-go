@@ -67,6 +67,19 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 	logger.Info("End UpdateEmployee - Controller")
 }
 
+func (ec *EmployeeController) UpdateEmployeeStatusById(c *gin.Context) {
+	logger.Info("Start UpdateEmployeeStatusById - COntroller")
+	id := c.Param("id")
+	var employeeData dto.UpdateEmployeeStatusRequest
+	if err := c.BindJSON(&employeeData); err != nil {
+		c.JSON(400, helpers.ErrInvalidRequest)
+		return
+	}
+	resp := ec.EmployeeService.UpdateEmployeeStatusById(id, employeeData)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End UpdateEmployeeStatusById - Controller")
+}
+
 func (ec *EmployeeController) UploadIdProof(c *gin.Context) {
 	logger.Info("Start UploadIdProof in Controller")
 	id := c.Param("id")

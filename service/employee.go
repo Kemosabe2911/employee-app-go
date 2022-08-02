@@ -16,6 +16,7 @@ type EmployeeService interface {
 	GetEmployeeById(string) *model.APIResponse
 	DeleteEmployee(string) *model.APIResponse
 	UpdateEmployee(string, dto.UpdateEmployeeRequest) *model.APIResponse
+	UpdateEmployeeStatusById(string, dto.UpdateEmployeeStatusRequest) *model.APIResponse
 	UploadIdProof(id string, newFileName string) *model.APIResponse
 }
 
@@ -272,6 +273,37 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 		}
 	}
 	logger.Info("Updated employee")
+	return &model.APIResponse{
+		StatusCode: 200,
+		Data:       employee,
+	}
+}
+
+func (es *employeeService) UpdateEmployeeStatusById(id string, employeeRequest dto.UpdateEmployeeStatusRequest) *model.APIResponse {
+	logger.Info("Start UpdateEmployee - Service")
+	employee, err := es.employeeRepository.GetEmployeeById(id)
+	logger.Info(employee)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Employee not found",
+			},
+		}
+	}
+
+	employee, err = es.employeeRepository.UpdateEmployeeStatusById(id, employeeRequest.IsActive)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Update Failed",
+			},
+		}
+	}
+	logger.Info(employee)
 	return &model.APIResponse{
 		StatusCode: 200,
 		Data:       employee,
