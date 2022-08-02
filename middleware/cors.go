@@ -34,7 +34,6 @@ func CORSMiddleware() gin.HandlerFunc {
 
 		if origin := c.Request.Header.Get("Origin"); allowList[origin] {
 			fmt.Println("HERE", c.Request.Header.Get("Origin"))
-			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set(
@@ -52,11 +51,10 @@ func CORSMiddleware() gin.HandlerFunc {
 			`,
 		)
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
 		if c.Request.Method == "OPTIONS" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
 			c.AbortWithStatus(204)
-			fmt.Println(c.Writer.Header().Get(("Access-Control-Allow-Origin")))
 			return
 		}
 

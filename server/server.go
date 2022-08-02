@@ -20,7 +20,7 @@ func Start() {
 		panic(dbErr)
 	}
 
-	// database.InitialMigration(db)
+	database.InitialMigration(db)
 
 	//Initialize Logger
 	_, err := logger.InitLogger(config.Env)
