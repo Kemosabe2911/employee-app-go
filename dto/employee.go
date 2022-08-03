@@ -15,6 +15,7 @@ type CreateEmployeeRequest struct {
 type UpdateEmployeeRequest struct {
 	Name         string `json:"name"`
 	Username     string `json:"username"`
+	Email        string `json:"email"`
 	Age          int    `json:"age"`
 	IsActive     bool   `json:"is_active"`
 	DepartmentID int    `json:"department_id"`
