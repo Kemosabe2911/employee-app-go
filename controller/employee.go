@@ -32,7 +32,15 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 
 func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
 	logger.Info("Start GetAllEmployees in Controller")
-	resp := ec.EmployeeService.GetAllEmployees()
+	search, err := helpers.GetFilterValue(c)
+	if err != nil {
+		logger.Info("search value is empty")
+	}
+	sort_by, order, err := helpers.GetSortingValue(c)
+	if err != nil {
+		logger.Info("sort value is empty")
+	}
+	resp := ec.EmployeeService.GetAllEmployees(search, sort_by, order)
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End GetAllEmployees in Controller")
 }

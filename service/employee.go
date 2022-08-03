@@ -3,6 +3,8 @@ package service
 import (
 	"strconv"
 
+	"github.com/Kemosabe2911/employee-app-go/helpers"
+
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
@@ -12,7 +14,7 @@ import (
 
 type EmployeeService interface {
 	CreateEmployee(employeeRequest dto.CreateEmployeeRequest) *model.APIResponse
-	GetAllEmployees() *model.APIResponse
+	GetAllEmployees(string, string, string) *model.APIResponse
 	GetEmployeeById(string) *model.APIResponse
 	DeleteEmployee(string) *model.APIResponse
 	UpdateEmployee(string, dto.UpdateEmployeeRequest) *model.APIResponse
@@ -94,9 +96,14 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 	}
 }
 
-func (es *employeeService) GetAllEmployees() *model.APIResponse {
+func (es *employeeService) GetAllEmployees(search string, sort_by string, order string) *model.APIResponse {
 	logger.Info("Start GetAllEmployees in Service")
-	employee, err := es.employeeRepository.GetAllEmployees()
+	filter := helpers.Pagination{
+		Filter: search,
+		SortBy: sort_by,
+		Order:  order,
+	}
+	employee, err := es.employeeRepository.GetAllEmployees(filter)
 	if err != nil {
 		logger.Error("Error in service")
 		return &model.APIResponse{
