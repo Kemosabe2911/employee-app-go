@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/Kemosabe2911/employee-app-go/helpers"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
 	"gorm.io/gorm"
@@ -8,13 +9,14 @@ import (
 
 type EmployeeRepository interface {
 	CreateEmployee(model.Employee) (model.Employee, error)
-	GetAllEmployees() ([]model.Employee, error)
+	GetAllEmployees(helpers.Pagination) ([]model.Employee, error)
 	GetEmployeeById(string) (model.Employee, error)
 	CreateAddress(model.Address) (model.Address, error)
 	GetAddressById(int) (model.Address, error)
 	DeleteEmployee(string) error
 	UpdateEmployee(string, model.Employee) (model.Employee, error)
 	UpdateAddress(string, model.Address) (model.Address, error)
+	UpdateEmployeeStatusById(string, bool) (model.Employee, error)
 	GetEmployeeByEmail(string) (model.Employee, error)
 	UploadIdProof(id string, newFileName string) (model.Employee, error)
 }
@@ -36,12 +38,23 @@ func (er *employeeRepository) CreateEmployee(employee model.Employee) (model.Emp
 	return employee, err
 }
 
-func (er *employeeRepository) GetAllEmployees() ([]model.Employee, error) {
+func (er *employeeRepository) GetAllEmployees(filter helpers.Pagination) ([]model.Employee, error) {
 	logger.Info("Start GetAllEmployees in Repo")
 	var employee []model.Employee
-	err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
-	logger.Info("End GetAllEmployees in Repo")
-	return employee, err
+	if filter.Filter == "" && filter.SortBy == "" {
+		err := er.DB.Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
+		return employee, err
+	} else if filter.Filter == "" {
+		err := er.DB.Order(filter.SortBy + " " + filter.Order).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
+		return employee, err
+	} else if filter.SortBy == "" {
+		err := er.DB.Where("username LIKE ?", filter.Filter+"%").Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
+		return employee, err
+	} else {
+		err := er.DB.Order(filter.SortBy+" "+filter.Order).Where("username LIKE ?", filter.Filter+"%").Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").Find(&employee).Error
+		logger.Info("End GetAllEmployees in Repo")
+		return employee, err
+	}
 }
 
 func (er *employeeRepository) GetEmployeeById(id string) (model.Employee, error) {
@@ -104,6 +117,14 @@ func (er *employeeRepository) UpdateAddress(id string, address model.Address) (m
 	err := er.DB.Where("id = ?", id).Updates(&address).Error
 	logger.Info("Ended UpdateAddress in Repo")
 	return address, err
+}
+
+func (er *employeeRepository) UpdateEmployeeStatusById(id string, is_active bool) (model.Employee, error) {
+	logger.Info("Started UpdateEmployeeStatusById in Repo")
+	var employee model.Employee
+	err := er.DB.Model(&employee).Where("id = ?", id).Update("is_active", is_active).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
+	logger.Info("Ended UpdateEmployeeStatusById in Repo")
+	return employee, err
 }
 
 func (er *employeeRepository) GetEmployeeByEmail(email string) (model.Employee, error) {

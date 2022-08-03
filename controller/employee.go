@@ -32,7 +32,15 @@ func (ec *EmployeeController) CreateEmployee(c *gin.Context) {
 
 func (ec *EmployeeController) GetAllEmployees(c *gin.Context) {
 	logger.Info("Start GetAllEmployees in Controller")
-	resp := ec.EmployeeService.GetAllEmployees()
+	search, err := helpers.GetFilterValue(c)
+	if err != nil {
+		logger.Info("search value is empty")
+	}
+	sort_by, order, err := helpers.GetSortingValue(c)
+	if err != nil {
+		logger.Info("sort value is empty")
+	}
+	resp := ec.EmployeeService.GetAllEmployees(search, sort_by, order)
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End GetAllEmployees in Controller")
 }
@@ -65,6 +73,19 @@ func (ec *EmployeeController) UpdateEmployee(c *gin.Context) {
 	resp := ec.EmployeeService.UpdateEmployee(id, employeeData)
 	c.JSON(resp.StatusCode, resp.Data)
 	logger.Info("End UpdateEmployee - Controller")
+}
+
+func (ec *EmployeeController) UpdateEmployeeStatusById(c *gin.Context) {
+	logger.Info("Start UpdateEmployeeStatusById - COntroller")
+	id := c.Param("id")
+	var employeeData dto.UpdateEmployeeStatusRequest
+	if err := c.BindJSON(&employeeData); err != nil {
+		c.JSON(400, helpers.ErrInvalidRequest)
+		return
+	}
+	resp := ec.EmployeeService.UpdateEmployeeStatusById(id, employeeData)
+	c.JSON(resp.StatusCode, resp.Data)
+	logger.Info("End UpdateEmployeeStatusById - Controller")
 }
 
 func (ec *EmployeeController) UploadIdProof(c *gin.Context) {

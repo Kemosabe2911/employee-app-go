@@ -23,3 +23,7 @@ type UpdateEmployeeRequest struct {
 	City         string `json:"city"`
 	State        string `json:"state"`
 }
+
+type UpdateEmployeeStatusRequest struct {
+	IsActive bool `json:"is_active"`
+}

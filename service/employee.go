@@ -3,6 +3,8 @@ package service
 import (
 	"strconv"
 
+	"github.com/Kemosabe2911/employee-app-go/helpers"
+
 	"github.com/Kemosabe2911/employee-app-go/dto"
 	"github.com/Kemosabe2911/employee-app-go/logger"
 	"github.com/Kemosabe2911/employee-app-go/model"
@@ -12,10 +14,11 @@ import (
 
 type EmployeeService interface {
 	CreateEmployee(employeeRequest dto.CreateEmployeeRequest) *model.APIResponse
-	GetAllEmployees() *model.APIResponse
+	GetAllEmployees(string, string, string) *model.APIResponse
 	GetEmployeeById(string) *model.APIResponse
 	DeleteEmployee(string) *model.APIResponse
 	UpdateEmployee(string, dto.UpdateEmployeeRequest) *model.APIResponse
+	UpdateEmployeeStatusById(string, dto.UpdateEmployeeStatusRequest) *model.APIResponse
 	UploadIdProof(id string, newFileName string) *model.APIResponse
 }
 
@@ -93,9 +96,14 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 	}
 }
 
-func (es *employeeService) GetAllEmployees() *model.APIResponse {
+func (es *employeeService) GetAllEmployees(search string, sort_by string, order string) *model.APIResponse {
 	logger.Info("Start GetAllEmployees in Service")
-	employee, err := es.employeeRepository.GetAllEmployees()
+	filter := helpers.Pagination{
+		Filter: search,
+		SortBy: sort_by,
+		Order:  order,
+	}
+	employee, err := es.employeeRepository.GetAllEmployees(filter)
 	if err != nil {
 		logger.Error("Error in service")
 		return &model.APIResponse{
@@ -272,6 +280,37 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 		}
 	}
 	logger.Info("Updated employee")
+	return &model.APIResponse{
+		StatusCode: 200,
+		Data:       employee,
+	}
+}
+
+func (es *employeeService) UpdateEmployeeStatusById(id string, employeeRequest dto.UpdateEmployeeStatusRequest) *model.APIResponse {
+	logger.Info("Start UpdateEmployee - Service")
+	employee, err := es.employeeRepository.GetEmployeeById(id)
+	logger.Info(employee)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Employee not found",
+			},
+		}
+	}
+
+	employee, err = es.employeeRepository.UpdateEmployeeStatusById(id, employeeRequest.IsActive)
+	if err != nil {
+		logger.Error("Error in service")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Update Failed",
+			},
+		}
+	}
+	logger.Info(employee)
 	return &model.APIResponse{
 		StatusCode: 200,
 		Data:       employee,

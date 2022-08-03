@@ -79,3 +79,25 @@ func ValidateToken(signedToken string) (string, error) {
 	}
 	return claims.Email, nil
 }
+
+func GenerateAccessAndRefreshToken(email string) (interface{}, error) {
+	access_token, err := GenerateAccessToken(email)
+	if err != nil {
+		logger.Error("Error while creating Access Token")
+		return nil, err
+	}
+	logger.Info(access_token)
+
+	refresh_token, err := GenerateRefreshToken(email)
+	if err != nil {
+		logger.Error("Error while creating Refresh Token")
+		return nil, err
+	}
+	logger.Info(refresh_token)
+
+	tokens := TokenStruct{
+		Access:  access_token,
+		Refresh: refresh_token,
+	}
+	return tokens, nil
+}
