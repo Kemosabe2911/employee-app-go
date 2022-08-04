@@ -45,28 +45,6 @@ func (es *employeeService) CreateEmployee(employeeRequest dto.CreateEmployeeRequ
 		State:  employeeRequest.State,
 	}
 
-	// address, err1 := es.employeeRepository.CreateAddress(address)
-	// if err1 != nil {
-	// 	logger.Error("Error while inserting address")
-	// 	return &model.APIResponse{
-	// 		StatusCode: 404,
-	// 		Data: &model.ErrorStatus{
-	// 			Message: "Cannot save address",
-	// 		},
-	// 	}
-	// }
-
-	// role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employeeRequest.RoleID))
-	// if err2 != nil {
-	// 	logger.Error("Error while getting role")
-	// 	return &model.APIResponse{
-	// 		StatusCode: 404,
-	// 		Data: &model.ErrorStatus{
-	// 			Message: "Cannot retrive role",
-	// 		},
-	// 	}
-	// }
-
 	employee := model.Employee{
 		Name:         employeeRequest.Name,
 		Username:     employeeRequest.Username,
@@ -114,37 +92,6 @@ func (es *employeeService) GetAllEmployees(search string, sort_by string, order 
 		}
 	}
 
-	// var employeeAll []model.Employee
-
-	// for i, data := range employee {
-	// 	logger.Info(i, data, data.AddressID, data.RoleID)
-	// 	address, err1 := es.employeeRepository.GetAddressById(data.AddressID)
-	// 	if err1 != nil {
-	// 		logger.Error("Error in service")
-	// 		return &model.APIResponse{
-	// 			StatusCode: 404,
-	// 			Data: &model.ErrorStatus{
-	// 				Message: "Address not found",
-	// 			},
-	// 		}
-	// 	}
-	// 	data.Address = address
-
-	// 	role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(data.RoleID))
-	// 	if err2 != nil {
-	// 		logger.Error("Error in service")
-	// 		return &model.APIResponse{
-	// 			StatusCode: 404,
-	// 			Data: &model.ErrorStatus{
-	// 				Message: "Role not found",
-	// 			},
-	// 		}
-	// 	}
-	// 	data.Role = role
-	// 	employeeAll = append(employeeAll, data)
-	// }
-
-	// logger.Info(employeeAll)
 	logger.Info("End GetAllEmployees in Service")
 	return &model.APIResponse{
 		StatusCode: 200,
@@ -164,30 +111,6 @@ func (es *employeeService) GetEmployeeById(id string) *model.APIResponse {
 			},
 		}
 	}
-
-	// address, err1 := es.employeeRepository.GetAddressById(employee.AddressID)
-	// if err1 != nil {
-	// 	logger.Error("Error in service")
-	// 	return &model.APIResponse{
-	// 		StatusCode: 404,
-	// 		Data: &model.ErrorStatus{
-	// 			Message: "Address not found",
-	// 		},
-	// 	}
-	// }
-	// employee.Address = address
-
-	// role, err2 := es.roleRepository.GetRoleById(strconv.Itoa(employee.RoleID))
-	// if err2 != nil {
-	// 	logger.Error("Error in service")
-	// 	return &model.APIResponse{
-	// 		StatusCode: 404,
-	// 		Data: &model.ErrorStatus{
-	// 			Message: "Role not found",
-	// 		},
-	// 	}
-	// }
-	// employee.Role = role
 
 	logger.Info("End GetEmployeeById in Service")
 	return &model.APIResponse{
@@ -270,7 +193,17 @@ func (es *employeeService) UpdateEmployee(id string, employeeRequest dto.UpdateE
 
 	employee, ok := es.employeeRepository.UpdateEmployee(id, employee)
 	if ok != nil {
-		logger.Error("Error while address employee")
+		logger.Error("Error while updating employee")
+		return &model.APIResponse{
+			StatusCode: 404,
+			Data: &model.ErrorStatus{
+				Message: "Cannot update employee",
+			},
+		}
+	}
+	employee, err = es.employeeRepository.UpdateEmployeeStatusById(id, employeeRequest.IsActive)
+	if err != nil {
+		logger.Error("Error while updating status")
 		return &model.APIResponse{
 			StatusCode: 404,
 			Data: &model.ErrorStatus{

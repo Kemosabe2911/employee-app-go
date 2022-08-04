@@ -97,17 +97,17 @@ func (er *employeeRepository) UpdateEmployee(id string, employee model.Employee)
 		return employeeData, err
 	}
 	logger.Info(employeeData, employee)
-	// err = er.DB.Session(&gorm.Session{FullSaveAssociations: true}).Where("id = ?", id).Updates(&employee).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
-	err = er.DB.Model(&employeeData).Updates(map[string]interface{}{
-		"name":       employee.Name,
-		"Username":   employee.Username,
-		"Email":      employee.Email,
-		"age":        employee.Age,
-		"is_active":  employee.IsActive,
-		"Department": employee.Department,
-		"Role":       employee.Role,
-		"Address":    employee.Address,
-	}).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
+	err = er.DB.Session(&gorm.Session{FullSaveAssociations: true}).Where("id = ?", id).Updates(&employee).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
+	// err = er.DB.Model(&employeeData).Updates(map[string]interface{}{
+	// 	"name":          employee.Name,
+	// 	"username":      employee.Username,
+	// 	"email":         employee.Email,
+	// 	"age":           employee.Age,
+	// 	"is_active":     employee.IsActive,
+	// 	"department_id": employee.DepartmentID,
+	// 	"role_id":       employee.RoleID,
+	// 	"Address":       employee.Address,
+	// }).Preload("Address").Preload("Role").Preload("Department").Preload("Department.Department").First(&employee, "id = ?", id).Error
 	logger.Info("Ended UpdateEmployee in Repo")
 	return employee, err
 }
