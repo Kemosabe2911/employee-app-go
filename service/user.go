@@ -29,6 +29,11 @@ func CreateUserService(db *gorm.DB) *userService {
 	}
 }
 
+type ReturnData struct {
+	Token auth.TokenStruct
+	User  model.User
+}
+
 func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResponseWithError {
 	if ok := utils.VerfityPassword(userData.Password, userData.ConfirmPassword); !ok {
 		return &model.APIResponseWithError{
@@ -63,6 +68,7 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 	}
 	logger.Info(user)
 
+	var returnData ReturnData
 	user, err := us.userRepository.CreateUser(user)
 	if err != nil {
 		logger.Error("Error while creating user")
@@ -74,6 +80,7 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 			Error: err,
 		}
 	}
+	returnData.User = user
 	tokens, err := auth.GenerateAccessAndRefreshToken(user.Email)
 	if err != nil {
 		logger.Error("Error while creating tokens")
@@ -85,10 +92,12 @@ func (us *userService) CreateUser(userData dto.UserSignUpRequest) *model.APIResp
 			Error: err,
 		}
 	}
+	returnData.Token = tokens.(auth.TokenStruct)
+	logger.Info(returnData)
 	logger.Info("Saved user")
 	return &model.APIResponseWithError{
 		StatusCode: 201,
-		Data:       tokens,
+		Data:       returnData,
 		Error:      nil,
 	}
 }
@@ -102,6 +111,7 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 		}
 	}
 
+	var returnData ReturnData
 	user, err := us.userRepository.GetUserByEmail(loginData.Email)
 	if err != nil {
 		logger.Error("Error while getting user")
@@ -114,6 +124,7 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 		}
 	}
 
+	returnData.User = user
 	logger.Info(user)
 	if ok := utils.CheckPasswordHash(loginData.Password, user.Password); !ok {
 		return &model.APIResponseWithError{
@@ -168,10 +179,11 @@ func (us *userService) UserLogin(loginData dto.UserLoginRequest) *model.APIRespo
 		}
 	}
 
+	returnData.Token = tokens.(auth.TokenStruct)
 	logger.Info("Login user")
 	return &model.APIResponseWithError{
 		StatusCode: 200,
-		Data:       tokens,
+		Data:       returnData,
 		Error:      nil,
 	}
 }
