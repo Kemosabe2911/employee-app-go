@@ -10,6 +10,6 @@ type Department struct {
 type DepartmentDetails struct {
 	Id             uint   `json:"id" gorm:"primarykey;autoIncrement"`
 	DepartmentRoom string `json:"department_room"`
-	DepartmentCode string `json:"department_code"`
+	DepartmentCode string `json:"department_code" gorm:"unique"`
 	Website        string `json:"website"`
 }
